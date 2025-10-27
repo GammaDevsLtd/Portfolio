@@ -1,0 +1,291 @@
+.contactSection {
+  padding: 80px 0;
+  background: url("/Contact.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--white);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header {
+  margin-bottom: 3rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.title {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(to left, #6ce0f6 50%, #ffffff 87%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+/* .subtitle p {
+   margin: 10px 0; 
+  text-align: center;
+} */
+
+.contactContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.contactInfo h3 {
+  color: var(--lighter-blue);
+  margin-bottom: 30px;
+  font-size: 1.5rem;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: bolder;
+}
+
+.infoItem {
+  margin-bottom: 30px;
+}
+
+.infoItem h4 {
+  color: var(--light-blue);
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.infoItem p {
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.contactForm {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--lighter-blue);
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--light-blue);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.formGroup small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(
+    135deg,
+    var(--light-blue) 0%,
+    var(--lighter-blue) 100%
+  );
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(50, 208, 235, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contactContent {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .contactForm {
+    padding: 30px 20px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactSection {
+    padding: 60px 0;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+}
+
+
+/* CUSTOM SELECT */
+.customSelectWrapper {
+  position: relative;
+  width: 100%;
+  color: var(--white);
+}
+
+/* The button that shows the selected value */
+.selectButton {
+  /* This copies your existing input styles */
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  /* New styles for layout */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.selectButton:focus,
+.selectButton:hover {
+  border-color: var(--light-blue);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.selectPlaceholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.selectedValue {
+  color: var(--white);
+}
+
+/* The chevron icon */
+.selectChevron {
+  transition: transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.selectChevron.open {
+  transform: rotate(180deg);
+}
+
+/* The dropdown menu */
+.optionsMenu {
+  position: absolute;
+  top: calc(100% + 8px); /* 8px spacing from the button */
+  left: 0;
+  right: 0;
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+
+  /* This is where you set your custom background! */
+  background: var(--dark-blue);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  
+  border-radius: 8px;
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  
+  /* Scrollbar styling (optional, but nice) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--light-blue) var(--dark-blue);
+}
+
+/* Individual option items */
+.optionItem {
+  padding: 12px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Option hover state */
+.optionItem:hover {
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+
+/* Currently selected option */
+.optionItem.selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}

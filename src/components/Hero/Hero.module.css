@@ -1,0 +1,104 @@
+.container{
+    padding-top: 4rem;
+    width: 100%;
+    height: 100vh;
+    background: url("/glassbg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 5rem;
+}
+
+.herotext{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 50%;
+}
+
+.title{
+    font-family: var(--font-raleway), sans-serif;
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.subtitle{
+    color: var(--lighter-blue);
+    font-weight: 700;
+}
+
+.buttons{
+    display: flex;
+    gap: 2rem;
+}
+
+.launch, .book{
+    padding: 1rem 3rem;
+    border-radius: 3rem;
+    font-weight: 700;
+}
+
+.launch{
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #fff;
+    background: rgba(35, 32, 39, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  /* z-index: 1; */
+}
+
+
+
+.book{
+    background: var(--light-blue);
+    transition: background 0.3s ease;
+}
+
+.book:hover{
+    background: var(--lighter-blue);
+}
+
+@media (max-width: 780px) {
+  .herotext{
+    width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .container{
+    justify-content: center;
+    padding: 0 1rem;
+    padding-top: 2rem;
+  }
+
+  .herotext{
+    width: 100%;
+    justify-content: center;
+  }
+
+  .title{
+    width: 100%;
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .subtitle{
+    text-align: center;
+  }
+
+  .buttons{
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .launch, .book{
+    padding: 2rem 3rem;
+  }
+}
+
+@media (max-width: 400px) {}

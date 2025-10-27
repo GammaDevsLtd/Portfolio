@@ -1,0 +1,189 @@
+.container {
+  width: 100%;
+  min-height: 100vh; /* Changed to min-height for responsiveness */
+  height: auto; /* Allow height to grow */
+  background-color: #000000;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.circle {
+  position: absolute;
+  z-index: 1;
+  width: 1350px;
+  height: 1350px;
+  background-color: #0c162f;
+  border-radius: 50%;
+  top: -600px;
+  left: -400px;
+  box-shadow: inset 0px 15px 60px -20px rgba(66, 135, 245, 0.4);
+  /* Add transition for smooth resizing */
+  transition: all 0.5s ease;
+}
+
+.aboutContent {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  min-height: 100vh; /* Changed to min-height */
+  height: auto; /* Allow height to grow */
+  z-index: 2;
+  /* Add padding for mobile */
+  padding: 6rem 0; 
+}
+
+.textarea {
+  flex: 1;
+  width: 50%;
+  color: var(--white);
+  font-family: var(--font-montserrat), sans-serif;
+  z-index: 2;
+  padding: 0 5rem;
+}
+
+.title {
+  font-family: var(--font-raleway), sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  background: linear-gradient(to left, #6ce0f6 50%, #ffffff 87%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* Add transition for smooth resizing */
+  transition: font-size 0.3s ease;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.subtitle p {
+  margin: 10px 0;
+}
+
+.imgcontainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100%; Removed fixed height */
+  width: 50%;
+  position: relative;
+  z-index: 2;
+}
+
+.imageCard {
+  border: 3px solid var(--white);
+  position: relative;
+  width: 70%;
+  /* Use aspect-ratio to keep it square */
+  aspect-ratio: 1 / 1;
+  height: auto; 
+  transition: all 0.3s ease;
+}
+
+.imagecontainer {
+  position: absolute;
+  top: 3rem;
+  left: 3rem;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.img {
+  object-fit: cover;
+}
+
+/* Breakpoint for tablets and large phones */
+@media (max-width: 900px) {
+  .aboutContent {
+    flex-direction: column;
+    padding: 6rem 2rem 4rem 2rem; 
+    text-align: center; 
+    gap: 4rem;
+  }
+
+  .textarea {
+    width: 100%; /* Take full width */
+    flex: none;
+    padding: 0 1rem;
+  }
+
+  .title {
+    font-size: 2.25rem; /* Reduce title size */
+  }
+
+  /* Center the title's underline */
+  .title::after {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .imgcontainer {
+    width: 100%; /* Take full width */
+    flex: none;
+  }
+
+  .imageCard {
+    width: 90%; /* Make image card larger */
+    max-width: 400px; /* But not TOO large */
+  }
+
+  .imagecontainer {
+    top: 1.5rem; /* Reduce image offset */
+    left: 1.5rem;
+  }
+
+  /* Reposition the decorative circle */
+  .circle {
+    width: 900px;
+    height: 900px;
+    top: -400px;
+    left: -300px;
+  }
+}
+
+/* Breakpoint for small phones */
+@media (max-width: 480px) {
+  .aboutContent {
+    padding: 4rem 1.5rem 3rem 1.5rem; /* Further reduce padding */
+  }
+  
+  .title {
+    font-size: 1.8rem; /* Even smaller title */
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .imageCard {
+    width: 90%;
+  }
+
+  .imagecontainer {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .circle {
+    width: 600px;
+    height: 600px;
+    top: -250px;
+    left: -200px;
+  }
+}

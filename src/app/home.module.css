@@ -1,0 +1,10 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+#home,
+#about {
+  height: 100vh;
+}

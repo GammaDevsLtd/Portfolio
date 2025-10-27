@@ -1,0 +1,175 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  overflow-x: hidden; 
+}
+
+.header {
+  width: 100%;
+}
+
+.title {
+  font-family: var(--font-raleway), sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  background: linear-gradient(to left, #6ce0f6 70%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  transition: font-size 0.3s ease; 
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.cardGrid {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem; 
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.card {
+  width: 100%;
+  max-width: 380px; 
+  height: 450px;
+  border: 5px solid white;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stacks {
+  padding: 9px 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.icon {
+  padding: 0.55rem;
+  color: white;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.8);
+  font-size: 1.3rem;
+  border: 1.5px solid #ffffff;
+}
+
+.details {
+  width: 100%;
+  padding: 15px 14px;
+  background: rgba(35, 32, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+
+.cardHeader {
+  font-size: 1.5rem; 
+  font-weight: 700;
+  font-family: var(--font-montserrat), sans-serif;
+  margin-bottom: 0.75rem; /* Added margin */
+  transition: font-size 0.3s ease;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  /* Use space-between for more predictable spacing */
+  justify-content: space-between; 
+  gap: 1rem; /* Add gap for spacing */
+  transition: all 0.3s ease;
+}
+
+.desc {
+  font-size: 12px;
+  /* --- FIX 5: FLEXIBLE DESCRIPTION --- */
+  flex: 1; /* Let the description take up the remaining space */
+  min-width: 0; /* Prevents flexbox overflow */
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.visit {
+  /* --- FIX 6: FLEXIBLE BUTTON --- */
+  /* Remove fixed width, let it size to content */
+  flex-shrink: 0; /* Stop it from shrinking */
+  padding: 0.7rem 1.2rem; /* Adjusted padding */
+  
+  background-color: black;
+  font-weight: 700;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.visit:hover {
+  transform: translateY(-0.5rem) scale(1.05);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.view {
+  font-family: var(--font-raleway), sans-serif;
+  font-weight: bolder;
+  text-decoration: underline;
+  text-decoration-color: var(--lighter-blue);
+  text-decoration-thickness: 2px;
+  margin-top: 1rem; /* Added margin */
+  cursor: pointer;
+}
+
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .cardGrid {
+    grid-template-columns: minmax(1fr, 2fr);
+  }
+
+  .card {
+    max-width: 100%; 
+    height: 420px; 
+  }
+
+  .cardHeader {
+    font-size: 1.25rem;
+  }
+
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .desc {
+    width: 100%;
+  }
+
+  .visit {
+    width: 100%; 
+  }
+}

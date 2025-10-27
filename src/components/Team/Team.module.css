@@ -1,0 +1,397 @@
+.container {
+  width: 100%;
+  min-height: 110vh;
+  background: url("/Team.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 5rem;
+  flex-direction: column;
+  position: relative;
+  /* Add overflow-x: hidden to prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+}
+
+.header {
+  margin-top: 5rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.title {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(to left, #6ce0f6 50%, #ffffff 87%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-align: center;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtitle {
+  /* You had 'p' here, just applying to the span */
+  text-align: center; 
+}
+
+.sliderContainer {
+  display: flex;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  /* Use flex: 1 to fill remaining space */
+  flex: 1; 
+  min-height: 500px; /* Set a min-height */
+  justify-content: center;
+  align-items: center;
+}
+
+.body {
+  position: absolute;
+  top: 2rem;
+  left: 0;
+  display: flex;
+  width: 100%;
+  opacity: 1;
+  transition: all 0.8s ease-in-out;
+  z-index: 1;
+  /* Added align-items for better vertical centering */
+  align-items: center; 
+}
+
+.inactive {
+  z-index: 0;
+  opacity: 0;
+  display: none;
+  pointer-events: none;
+  transition: opacity 0.8s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pic,
+.details {
+  flex: 1;
+}
+
+.pic {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gradientWrapper {
+  width: 25rem;
+  height: 25rem;
+  border-radius: 50%;
+  padding: 10px;
+  background: linear-gradient(
+    to right,
+    #0a65cf 0%,
+    #32d0eb 50%,
+    #1f8ec1 75%,
+    #0c4d98 100%
+  );
+  /* Add transition for smooth resizing */
+  transition: all 0.3s ease;
+}
+
+.imgcontainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Add transition for smooth resizing */
+  transition: all 0.3s ease;
+}
+
+.role {
+  border-bottom: 3px solid #6ce0f6;
+  width: 100%;
+  /* Add transition for smooth resizing */
+  transition: all 0.3s ease;
+}
+
+.name {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  /* Add transition for smooth resizing */
+  transition: all 0.3s ease;
+}
+
+.position {
+  font-family: var(--font-raleway), sans-serif;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.socials {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.profile:hover {
+  color: var(--light-blue);
+}
+
+.social {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.icon {
+  padding: 0.6rem;
+  color: white;
+  border-radius: 50%;
+  background: linear-gradient(to left, #083365 0%, #0a65cf 100%);
+  font-size: 1.2rem;
+  border: 1.5px solid #ffffff;
+}
+
+.footer {
+  width: 100%;
+  height: 10%;
+  background: rgba(35, 32, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Add transition for smooth repositioning */
+  transition: all 0.3s ease;
+}
+
+.buttons {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  gap: 10px;
+  /* Add transition for smooth layout changes */
+  transition: all 0.3s ease;
+}
+
+.sliderImg {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  border: 4px solid var(--light-blue);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.sliderImginactive {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  border: 4px solid var(--light-blue);
+  position: relative;
+  overflow: hidden;
+  opacity: 0.4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sliderImginactive:hover {
+  opacity: 0.7;
+}
+
+/* =========================================
+  NEW RESPONSIVE STYLES
+=========================================
+*/
+
+/* We'll use 900px as the breakpoint */
+@media (max-width: 900px) {
+
+  /* 1. Adjust main container padding */
+  .container {
+    padding: 0 1.5rem;
+    min-height: 100vh; /* Use 100vh */
+  }
+
+  /* 2. Adjust header text */
+  .header {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  /* 3. Stack the main content */
+  .body {
+    flex-direction: column; /* This stacks .pic and .details */
+    top: 0;
+    gap: 2rem; /* Adds space between pic and details */
+    justify-content: center;
+  }
+
+  .pic,
+  .details {
+    flex: none; /* Reset the flex-grow */
+    width: 100%;
+    align-items: center;
+    text-align: center; /* Center-align the text */
+  }
+
+  /* 4. Resize image and text */
+  .gradientWrapper {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .content {
+    align-items: center; /* Center the content block */
+  }
+
+  .role {
+    /* Center the border */
+    display: inline-block;
+    width: auto;
+    padding: 0 1rem;
+  }
+
+  .name {
+    font-size: 2rem;
+  }
+
+  .socials {
+    align-items: center; /* Center the social links */
+  }
+
+  /* 5. Transform Footer into a Sidebar */
+  .footer {
+    width: auto; /* Auto-width to fit buttons */
+    height: auto; /* Auto-height to fit buttons */
+    
+    /* Position on the right, centered vertically */
+    top: 50%;
+    right: 1.5rem;
+    bottom: auto; /* Unset bottom */
+    transform: translateY(-50%);
+
+    /* Style it like a sidebar */
+    padding: 1rem 0.5rem;
+    border-radius: 50px; /* "Pill" shape */
+  }
+
+  /* 6. Stack the buttons vertically */
+  .buttons {
+    flex-direction: column;
+    gap: 1rem; /* Vertical gap */
+    padding: 0;
+    height: auto;
+  }
+}
+
+/* A second breakpoint for very small phones */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .header {
+    margin-top: 2rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .gradientWrapper {
+    width: 16rem; /* Even smaller image */
+    height: 16rem;
+  }
+
+  .name {
+    font-size: 1.5rem;
+  }
+  
+  .desc {
+    font-size: 0.9rem;
+  }
+
+  /* On very small screens, a sidebar takes up too much
+    horizontal space. Let's move it back to the bottom.
+  */
+  .footer {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    transform: none; /* Reset the transform */
+    border-radius: 0; /* No border-radius */
+    padding: 0.5rem;
+  }
+
+  .buttons {
+    flex-direction: row; /* Go back to horizontal */
+    gap: 0.5rem;
+  }
+}
