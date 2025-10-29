@@ -1,0 +1,370 @@
+.container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--black) 0%, #1a1a1a 100%);
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: var(--white);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.addButton {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.addButton:hover:not(:disabled) {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.projectCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.projectCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.projectImage {
+  position: relative;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholderImage {
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 51, 101, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.projectCard:hover .cardOverlay {
+  opacity: 1;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.editBtn, .deleteBtn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--dark-blue);
+}
+
+.editBtn:hover {
+  background: var(--light-blue);
+  transform: scale(1.1);
+}
+
+.deleteBtn:hover {
+  background: #ff4757;
+  color: white;
+  transform: scale(1.1);
+}
+
+.visitLink {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.visitLink:hover {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+}
+
+.cardContent {
+  padding: 1.5rem;
+  color: var(--white);
+}
+
+.projectTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  color: var(--white);
+}
+
+.projectDescription {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: rgba(8, 51, 101, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--white);
+}
+
+.modal h2 {
+  color: var(--white);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  color: var(--white);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.formGroup input,
+.formGroup textarea {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--white);
+  font-family: var(--font-montserrat);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--light-blue);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.imageUploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.imagePreview {
+  width: 100%;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadButton {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.uploadButton:hover {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.saveBtn {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.saveBtn:hover {
+  background: var(--lighter-blue);
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .projectsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalOverlay {
+    padding: 1rem;
+  }
+
+  .modal {
+    padding: 1.5rem;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+
+  .cardOverlay {
+    opacity: 1;
+    background: rgba(8, 51, 101, 0.7);
+  }
+}
+
+@media (max-width: 480px) {
+  .projectCard {
+    margin: 0 -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}

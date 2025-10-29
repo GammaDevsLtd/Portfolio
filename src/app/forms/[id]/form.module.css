@@ -1,0 +1,82 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  margin-top: 4rem;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: var(--font-montserrat), sans-serif;
+  background-image: url("/admin.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.header {
+  margin-top: 5rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(to left, #6ce0f6 50%, #ffffff 87%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-align: center;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtitle {
+  text-align: center; 
+}
+
+.contactForm {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(
+    135deg,
+    var(--light-blue) 0%,
+    var(--lighter-blue) 100%
+  );
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(50, 208, 235, 0.3);
+}

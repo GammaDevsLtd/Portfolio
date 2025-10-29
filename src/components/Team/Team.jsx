@@ -13,7 +13,7 @@ const Teams = [
     image: "/about.jpg", // Placeholder image path
     role: "Co-Founder & Full-Stack Developer",
     desc: "A passionate developer with a knack for creating seamless user experiences and robust, scalable backend solutions.",
-    link: "#", // Placeholder link
+    link: "#", 
   },
   {
     name: "Adekunle Adebayo",

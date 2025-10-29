@@ -14,13 +14,13 @@ const projectTypeOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-const budgetOptions = [
-  { value: '1k-5k', label: '$1,000 - $5,000' },
-  { value: '5k-10k', label: '$5,000 - $10,000' },
-  { value: '10k-25k', label: '$10,000 - $25,000' },
-  { value: '25k-50k', label: '$25,000 - $50,000' },
-  { value: '50k+', label: '$50,000+' },
-];
+// const budgetOptions = [
+//   { value: '1k-5k', label: '$1,000 - $5,000' },
+//   { value: '5k-10k', label: '$5,000 - $10,000' },
+//   { value: '10k-25k', label: '$10,000 - $25,000' },
+//   { value: '25k-50k', label: '$25,000 - $50,000' },
+//   { value: '50k+', label: '$50,000+' },
+// ];
 
 const timelineOptions = [
   { value: 'asap', label: 'ASAP' },
@@ -123,18 +123,18 @@ const Contact = () => {
                   name="budget"
                   value={formData.budget}
                   onChange={handleChange}
-                  placeholder="Select Budget Range"
-                  options={budgetOptions}
+                  placeholder="What Type of Project?"
+                  options={projectTypeOptions}
                 />
               </div>
               <div className={styles.formGroup}>
                 <label htmlFor="budget">Estimated Budget *</label>
-                <CustomSelect
+                <input
                   name="budget"
+                  type="text"
                   value={formData.budget}
                   onChange={handleChange}
-                  placeholder="Select Budget Range"
-                  options={budgetOptions}
+                  placeholder="What is Budget Range"
                 />
               </div>
             </div>

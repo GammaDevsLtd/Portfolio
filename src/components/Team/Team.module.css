@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  min-height: 110vh;
+  min-height: 120vh;
   background: url("/Team.png");
   background-size: cover;
   background-position: center;
@@ -11,7 +11,6 @@
   padding: 0 5rem;
   flex-direction: column;
   position: relative;
-  /* Add overflow-x: hidden to prevent horizontal scroll on mobile */
   overflow-x: hidden;
 }
 
@@ -51,7 +50,6 @@
 }
 
 .subtitle {
-  /* You had 'p' here, just applying to the span */
   text-align: center; 
 }
 
@@ -60,9 +58,7 @@
   width: 100%;
   position: relative;
   overflow: hidden;
-  /* Use flex: 1 to fill remaining space */
   flex: 1; 
-  min-height: 500px; /* Set a min-height */
   justify-content: center;
   align-items: center;
 }
@@ -76,7 +72,6 @@
   opacity: 1;
   transition: all 0.8s ease-in-out;
   z-index: 1;
-  /* Added align-items for better vertical centering */
   align-items: center; 
 }
 
@@ -118,7 +113,6 @@
     #1f8ec1 75%,
     #0c4d98 100%
   );
-  /* Add transition for smooth resizing */
   transition: all 0.3s ease;
 }
 
@@ -146,14 +140,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* Add transition for smooth resizing */
   transition: all 0.3s ease;
 }
 
 .role {
   border-bottom: 3px solid #6ce0f6;
   width: 100%;
-  /* Add transition for smooth resizing */
   transition: all 0.3s ease;
 }
 
@@ -161,7 +153,6 @@
   font-family: var(--font-montserrat), sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  /* Add transition for smooth resizing */
   transition: all 0.3s ease;
 }
 
@@ -217,7 +208,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Add transition for smooth repositioning */
   transition: all 0.3s ease;
 }
 
@@ -229,7 +219,6 @@
   justify-content: center;
   padding: 0 5px;
   gap: 10px;
-  /* Add transition for smooth layout changes */
   transition: all 0.3s ease;
 }
 
@@ -259,21 +248,19 @@
   opacity: 0.7;
 }
 
-/* =========================================
-  NEW RESPONSIVE STYLES
-=========================================
-*/
+@media (max-width: 1024px) {
+  .container{
+    min-height: 100vh;
+  }
+}
 
-/* We'll use 900px as the breakpoint */
 @media (max-width: 900px) {
-
-  /* 1. Adjust main container padding */
   .container {
     padding: 0 1.5rem;
-    min-height: 100vh; /* Use 100vh */
+    min-height: 100vh;
+    gap: 3rem;
   }
 
-  /* 2. Adjust header text */
   .header {
     margin-top: 3rem;
     text-align: center;
@@ -283,76 +270,74 @@
     font-size: 2.25rem;
   }
 
-  /* 3. Stack the main content */
   .body {
-    flex-direction: column; /* This stacks .pic and .details */
+    flex-direction: column;
     top: 0;
-    gap: 2rem; /* Adds space between pic and details */
+    gap: 2rem; 
     justify-content: center;
   }
 
   .pic,
   .details {
-    flex: none; /* Reset the flex-grow */
+    flex: none;
     width: 100%;
     align-items: center;
-    text-align: center; /* Center-align the text */
+    text-align: center;
   }
 
-  /* 4. Resize image and text */
   .gradientWrapper {
     width: 20rem;
     height: 20rem;
   }
 
   .content {
-    align-items: center; /* Center the content block */
+    align-items: center; 
+    gap: 1.5rem;
   }
 
   .role {
-    /* Center the border */
     display: inline-block;
     width: auto;
-    padding: 0 1rem;
+    padding: 0 1.3rem;
   }
 
   .name {
     font-size: 2rem;
   }
 
-  .socials {
-    align-items: center; /* Center the social links */
+  .desc{
+    padding: 0 2rem;
   }
 
-  /* 5. Transform Footer into a Sidebar */
+  .socials {
+    align-items: center;
+    gap: 1rem;
+  }
+
   .footer {
-    width: auto; /* Auto-width to fit buttons */
-    height: auto; /* Auto-height to fit buttons */
-    
-    /* Position on the right, centered vertically */
+    width: auto;
+    height: auto;
     top: 50%;
     right: 1.5rem;
-    bottom: auto; /* Unset bottom */
+    bottom: auto;
     transform: translateY(-50%);
-
-    /* Style it like a sidebar */
     padding: 1rem 0.5rem;
-    border-radius: 50px; /* "Pill" shape */
+    border-radius: 50px; 
   }
 
-  /* 6. Stack the buttons vertically */
   .buttons {
     flex-direction: column;
-    gap: 1rem; /* Vertical gap */
+    gap: 1rem;
     padding: 0;
     height: auto;
   }
 }
 
-/* A second breakpoint for very small phones */
+
 @media (max-width: 480px) {
   .container {
     padding: 0 1rem;
+    min-height: 115vh;
   }
 
   .header {
@@ -364,7 +349,7 @@
   }
 
   .gradientWrapper {
-    width: 16rem; /* Even smaller image */
+    width: 16rem; 
     height: 16rem;
   }
 
@@ -376,22 +361,26 @@
     font-size: 0.9rem;
   }
 
-  /* On very small screens, a sidebar takes up too much
-    horizontal space. Let's move it back to the bottom.
-  */
   .footer {
     top: auto;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
-    transform: none; /* Reset the transform */
-    border-radius: 0; /* No border-radius */
+    transform: none;
+    border-radius: 0; 
     padding: 0.5rem;
   }
 
   .buttons {
-    flex-direction: row; /* Go back to horizontal */
+    flex-direction: row; 
     gap: 0.5rem;
+  }
+}
+
+
+@media (max-width: 400px) {
+  .container{
+    min-height: 140vh;
   }
 }

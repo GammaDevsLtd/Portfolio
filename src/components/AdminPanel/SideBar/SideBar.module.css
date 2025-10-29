@@ -1,0 +1,129 @@
+.sidebar {
+  background-color: var(--dark-blue, #083365);
+  color: var(--white, #fafaff);
+  font-family: var(--font-montserrat), sans-serif;
+  width: 280px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+}
+
+.logoSection {
+  margin-top: 4rem;
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--white, #fafaff);
+  margin: 0;
+  text-align: center;
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.menuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuItem {
+  margin-bottom: 0.5rem;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: var(--white, #fafaff);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.menuButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--white, #fafaff);
+}
+
+.menuButton.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid var(--white, #fafaff);
+}
+
+.icon {
+  font-size: 1.25rem;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+}
+
+.menuText {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.logoutSection {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: transparent;
+  color: var(--white, #fafaff);
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.logoutButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--white, #fafaff);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .menuButton,
+  .logoutButton {
+    padding: 0.875rem 1.25rem;
+  }
+}

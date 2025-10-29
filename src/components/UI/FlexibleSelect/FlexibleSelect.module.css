@@ -1,0 +1,223 @@
+/* components/UI/FlexibleSelect/FlexibleSelect.module.css */
+.flexibleSelectWrapper {
+  position: relative;
+  color: var(--white);
+  flex-shrink: 0; /* Prevent shrinking in flex layouts */
+}
+
+/* Size Variants */
+.flexibleSelectWrapper.small {
+  font-size: 0.8rem;
+}
+
+.flexibleSelectWrapper.medium {
+  font-size: 0.9rem;
+}
+
+.flexibleSelectWrapper.large {
+  font-size: 1rem;
+}
+
+/* Variant Styles */
+.flexibleSelectWrapper.default {
+  /* Default styles - full width inputs */
+}
+
+.flexibleSelectWrapper.compact {
+  /* For tighter spaces like in Teams social media section */
+  min-width: 120px;
+}
+
+.flexibleSelectWrapper.inline {
+  /* For filter selects in Client Requests */
+  min-width: 150px;
+}
+
+/* The button that shows the selected value */
+.selectButton {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: inherit;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* Size-specific padding */
+.flexibleSelectWrapper.small .selectButton {
+  padding: 8px 12px;
+}
+
+.flexibleSelectWrapper.medium .selectButton {
+  padding: 10px 14px;
+}
+
+.flexibleSelectWrapper.large .selectButton {
+  padding: 14px 16px;
+}
+
+/* Compact variant */
+.flexibleSelectWrapper.compact .selectButton {
+  padding: 8px 12px;
+  min-height: 40px;
+}
+
+/* Inline variant (for filters) */
+.flexibleSelectWrapper.inline .selectButton {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 36px;
+}
+
+.selectButton:focus,
+.selectButton:hover:not(.disabled) {
+  border-color: var(--light-blue);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.selectPlaceholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.selectedValue {
+  color: var(--white);
+}
+
+/* Disabled state */
+.flexibleSelectWrapper.disabled .selectButton {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.flexibleSelectWrapper.disabled .selectButton:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.disabledChevron {
+  opacity: 0.4;
+}
+
+/* The chevron icon */
+.selectChevron {
+  transition: transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8em;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.selectChevron.open {
+  transform: rotate(180deg);
+}
+
+/* The dropdown menu */
+.optionsMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+  background: var(--dark-blue);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--light-blue) var(--dark-blue);
+}
+
+/* Compact dropdown */
+.flexibleSelectWrapper.compact .optionsMenu {
+  min-width: 150px;
+  right: auto;
+}
+
+/* Inline dropdown */
+.flexibleSelectWrapper.inline .optionsMenu {
+  min-width: 180px;
+  right: auto;
+}
+
+/* Individual option items */
+.optionItem {
+  padding: 12px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: inherit;
+}
+
+/* Size-specific option padding */
+.flexibleSelectWrapper.small .optionItem {
+  padding: 8px 12px;
+}
+
+.flexibleSelectWrapper.medium .optionItem {
+  padding: 10px 14px;
+}
+
+.flexibleSelectWrapper.large .optionItem {
+  padding: 12px 16px;
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+/* Option hover state */
+.optionItem:hover:not(.optionDisabled) {
+  background-color: var(--light-blue);
+  color: var(--dark-blue);
+}
+
+/* Currently selected option */
+.optionItem.selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+/* Disabled option */
+.optionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: transparent !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Scrollbar styling */
+.optionsMenu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.optionsMenu::-webkit-scrollbar-track {
+  background: var(--dark-blue);
+  border-radius: 3px;
+}
+
+.optionsMenu::-webkit-scrollbar-thumb {
+  background: var(--light-blue);
+  border-radius: 3px;
+}
+
+.optionsMenu::-webkit-scrollbar-thumb:hover {
+  background: var(--lighter-blue);
+}

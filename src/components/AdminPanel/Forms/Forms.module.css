@@ -1,0 +1,782 @@
+/* components/AdminPanel/Forms/Forms.module.css */
+.container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--black) 0%, #1a1a1a 100%);
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: var(--white);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.addButton {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.addButton:hover:not(:disabled) {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.formCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.formCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.formTitle {
+  color: var(--white);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.viewBtn, .copyBtn, .editBtn, .deleteBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewBtn:hover {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+}
+
+.copyBtn:hover {
+  background: var(--lighter-blue);
+  color: var(--dark-blue);
+}
+
+.editBtn:hover {
+  background: #ffa502;
+  color: var(--dark-blue);
+}
+
+.deleteBtn:hover {
+  background: #ff4757;
+  color: var(--white);
+}
+
+.cardContent {
+  color: var(--white);
+}
+
+.formDescription {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.formMeta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.fieldCount, .submissionCount, .createdDate {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--light-blue);
+}
+
+.formLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.linkText {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+}
+
+.fieldsPreview h4 {
+  color: var(--white);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.fieldsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fieldTag {
+  background: rgba(50, 208, 235, 0.2);
+  color: var(--light-blue);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(50, 208, 235, 0.3);
+}
+
+.moreFields {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: rgba(8, 51, 101, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--white);
+}
+
+.modal h2 {
+  color: var(--white);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.modal h3 {
+  color: var(--white);
+  margin: 1.5rem 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  color: var(--white);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--white);
+  font-family: var(--font-montserrat);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--light-blue);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Fields Section */
+.fieldsSection {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1.5rem;
+}
+
+.addField {
+  margin-bottom: 1.5rem;
+}
+
+.fieldInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.addFieldBtn {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.addFieldBtn:hover:not(:disabled) {
+  background: var(--lighter-blue);
+}
+
+.addFieldBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fieldsList h4 {
+  color: var(--white);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.noFields {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.fieldItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fieldInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.fieldType {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--light-blue);
+}
+
+.fieldLabel {
+  font-weight: 500;
+  color: var(--white);
+}
+
+.fieldPlaceholder {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.requiredStar {
+  color: #ff4757;
+}
+
+.removeFieldBtn {
+  background: rgba(255, 71, 87, 0.2);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff4757;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.removeFieldBtn:hover {
+  background: #ff4757;
+  color: var(--white);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1.5rem;
+}
+
+.saveBtn {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: var(--lighter-blue);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .formsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalOverlay {
+    padding: 1rem;
+  }
+
+  .modal {
+    padding: 1.5rem;
+  }
+
+  .fieldInputs {
+    grid-template-columns: 1fr;
+  }
+
+  .formMeta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+
+  .cardActions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .formCard {
+    margin: 0 -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* components/AdminPanel/Forms/Forms.module.css */
+/* ... (previous styles remain the same) ... */
+
+/* New styles for enhanced features */
+
+/* Additional Action Buttons */
+.analyticsBtn, .submissionsBtn, .duplicateBtn, .exportBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.analyticsBtn:hover {
+  background: #4ECDC4;
+  color: var(--dark-blue);
+}
+
+.submissionsBtn:hover {
+  background: #45B7D1;
+  color: var(--dark-blue);
+}
+
+.duplicateBtn:hover {
+  background: #96CEB4;
+  color: var(--dark-blue);
+}
+
+.exportBtn {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+}
+
+.exportBtn:hover {
+  background: var(--lighter-blue);
+}
+
+/* Dropdown Options Styling */
+.dropdownOptions {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.optionsInput {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.optionsInput input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 0.5rem;
+  color: var(--white);
+}
+
+.addOptionBtn {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addOptionBtn:hover {
+  background: var(--lighter-blue);
+}
+
+.optionsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.optionTag {
+  background: rgba(50, 208, 235, 0.2);
+  color: var(--light-blue);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(50, 208, 235, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.removeOptionBtn {
+  background: none;
+  border: none;
+  color: #ff4757;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.7rem;
+}
+
+.removeOptionBtn:hover {
+  color: #ff6b6b;
+}
+
+.fieldOptions {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.25rem;
+}
+
+/* Submissions Table */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.exportButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.noSubmissions {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.submissionsTableContainer {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+}
+
+.submissionsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.submissionsTable th,
+.submissionsTable td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
+.submissionsTable th {
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.submissionsTable tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Analytics Styles */
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.summaryCards {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summaryCard {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summaryCard h3 {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.summaryNumber {
+  color: var(--light-blue);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.summaryDate {
+  color: var(--light-blue);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chartContainer {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chartContainer h3 {
+  color: var(--white);
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+/* Responsive Design Updates */
+@media (max-width: 768px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .summaryCards {
+    grid-template-columns: 1fr;
+  }
+  
+  .fieldInputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .modalHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .exportButtons {
+    justify-content: center;
+  }
+  
+  .submissionsTableContainer {
+    overflow-x: auto;
+  }
+  
+  .submissionsTable {
+    min-width: 800px;
+  }
+}
+
+/* Enhanced Card Actions for more buttons */
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* File Upload Field Specific Styles */
+.fileUploadNote {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
