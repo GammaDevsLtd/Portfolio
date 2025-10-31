@@ -3,13 +3,14 @@ import styles from "./ProjectsPage.module.css";
 import { PiFigmaLogoBold } from "react-icons/pi";
 import { RiNextjsFill } from "react-icons/ri";
 import { FaReact } from "react-icons/fa";
+import Link from "next/link";
 
 const projectsData = [
   {
     id: 1,
     title: "Aces Voting",
     description: "A website focused on prompting users to vote for their favorite contestants.",
-    backgroundImage: "/about.jpg",
+    image: "/about.jpg",
     link: "#",
     category: "Web Development"
   },
@@ -17,7 +18,7 @@ const projectsData = [
     id: 2,
     title: "GammaDevs Portfolio",
     description: "A creative studio website showcasing projects and services in web development.",
-    backgroundImage: "/Hero.jpg",
+    image: "/Hero.jpg",
     link: "#",
     category: "Web Design"
   },
@@ -25,7 +26,7 @@ const projectsData = [
     id: 3,
     title: "E-Commerce Hub",
     description: "A full-stack online store with payment integration and user authentication.",
-    backgroundImage: "/about.jpg",
+    image: "/about.jpg",
     link: "#",
     category: "E-Commerce"
   },
@@ -33,7 +34,7 @@ const projectsData = [
     id: 4,
     title: "Loft Roots",
     description: "A luxury vehicle marketplace with a focus on high-end, redefined trucks.",
-    backgroundImage: "/Hero.jpg",
+    image: "/Hero.jpg",
     link: "#",
     category: "Web Development"
   },
@@ -41,7 +42,7 @@ const projectsData = [
     id: 5,
     title: "Tech Learning Platform",
     description: "Interactive platform for digital skills training and mentorship programs.",
-    backgroundImage: "/about.jpg",
+    image: "/about.jpg",
     link: "#",
     category: "Education"
   },
@@ -49,7 +50,7 @@ const projectsData = [
     id: 6,
     title: "Business Solutions Suite",
     description: "Comprehensive business management tools for startups and enterprises.",
-    backgroundImage: "/Hero.jpg",
+    image: "/Hero.jpg",
     link: "#",
     category: "SaaS"
   },
@@ -88,7 +89,7 @@ const ProjectsPage = () => {
                 key={project.id}
                 className={styles.projectCard}
                 style={{
-                  background: `linear-gradient(125deg, rgba(12, 77, 152, 0.4) 1%, rgba(4, 25, 50, 0.4) 66%), url(${project.backgroundImage})`,
+                  background: `linear-gradient(125deg, rgba(12, 77, 152, 0.4) 1%, rgba(4, 25, 50, 0.4) 66%), url(${project.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
@@ -143,7 +144,7 @@ const ProjectsPage = () => {
           <p className={styles.ctaText}>
             Let's collaborate to build something amazing together
           </p>
-          <button className={styles.ctaBtn}>Start a Project</button>
+          <Link href="/#contact" className={styles.ctaBtn}>Start a Project</Link>
         </div>
       </section>
     </div>

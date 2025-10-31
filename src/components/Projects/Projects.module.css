@@ -56,6 +56,7 @@
   justify-content: space-between;
   overflow: hidden;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .stacks {
@@ -64,6 +65,8 @@
   align-items: center;
   gap: 0.3rem;
   width: 100%;
+  z-index: 2;
+  position: relative;
 }
 
 .icon {
@@ -75,50 +78,121 @@
   border: 1.5px solid #ffffff;
 }
 
+.moreStacks {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
 .details {
   width: 100%;
   padding: 15px 14px;
   background: rgba(35, 32, 39, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 2;
+  position: relative;
 }
 
-
 .cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+.cardHeader h1 {
   font-size: 1.5rem; 
   font-weight: 700;
   font-family: var(--font-montserrat), sans-serif;
-  margin-bottom: 0.75rem; /* Added margin */
-  transition: font-size 0.3s ease;
+  margin: 0;
+  flex: 1;
+  line-height: 1.2;
+}
+
+/* Status badges */
+.status {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.status.planned {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.in-progress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status.completed {
+  background: #d1fae5;
+  color: #065f46;
 }
 
 .content {
   display: flex;
-  align-items: center;
-  /* Use space-between for more predictable spacing */
-  justify-content: space-between; 
-  gap: 1rem; /* Add gap for spacing */
-  transition: all 0.3s ease;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .desc {
   font-size: 12px;
-  /* --- FIX 5: FLEXIBLE DESCRIPTION --- */
-  flex: 1; /* Let the description take up the remaining space */
-  min-width: 0; /* Prevents flexbox overflow */
   font-family: var(--font-montserrat), sans-serif;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Project meta information */
+.projectMeta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.categoryTag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+}
+
+/* Card actions */
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .visit {
-  /* --- FIX 6: FLEXIBLE BUTTON --- */
-  /* Remove fixed width, let it size to content */
-  flex-shrink: 0; /* Stop it from shrinking */
-  padding: 0.7rem 1.2rem; /* Adjusted padding */
-  
+  padding: 0.7rem 1.2rem;
   background-color: black;
+  color: white;
   font-weight: 700;
   border-radius: 2rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+  font-size: 0.9rem;
+  flex: 1;
+  text-align: center;
 }
 
 .visit:hover {
@@ -126,18 +200,86 @@
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-.view {
-  font-family: var(--font-raleway), sans-serif;
-  font-weight: bolder;
-  text-decoration: underline;
-  text-decoration-color: var(--lighter-blue);
-  text-decoration-thickness: 2px;
-  margin-top: 1rem; /* Added margin */
-  cursor: pointer;
+.viewDetails {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  flex: 1;
+  text-align: center;
 }
 
+.viewDetails:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-0.5rem) scale(1.05);
+}
 
-@media (max-width: 480px) {
+.view {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  background: transparent;
+  color: var(--light-blue);
+  text-decoration: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid var(--light-blue);
+  transition: all 0.3s ease;
+  text-align: center;
+  font-family: var(--font-montserrat);
+}
+
+.view:hover {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  transform: translateY(-2px);
+}
+
+.overlayContent {
+  text-align: center;
+  color: white;
+  width: 100%;
+}
+
+.overlayContent h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.overlayContent p {
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.detailsLink {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.detailsLink:hover {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .container {
     padding: 2rem 1.5rem;
   }
@@ -147,7 +289,7 @@
   }
 
   .cardGrid {
-    grid-template-columns: minmax(1fr, 2fr);
+    grid-template-columns: 1fr;
   }
 
   .card {
@@ -156,20 +298,40 @@
   }
 
   .cardHeader {
-    font-size: 1.25rem;
-  }
-
-  .content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
-  .desc {
-    width: 100%;
+  .status {
+    margin-left: 0;
+    align-self: flex-start;
   }
 
-  .visit {
-    width: 100%; 
+  .cardActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .cardHeader h1 {
+    font-size: 1.3rem;
+  }
+
+  .cardActions {
+    gap: 0.5rem;
+  }
+
+  .visit, .viewDetails {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
   }
 }

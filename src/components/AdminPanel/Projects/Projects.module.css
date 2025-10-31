@@ -64,6 +64,31 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+.techStack {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.techIcon {
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--white);
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.techIcon:hover {
+  background: var(--light-blue);
+  transform: scale(1.1);
+}
+
 .projectImage {
   position: relative;
   height: 200px;
@@ -281,6 +306,76 @@
   transform: translateY(-2px);
 }
 
+.stacksManagement {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1rem;
+}
+
+.stacksManagement h4 {
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.stackItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.removeStackBtn {
+  background: transparent;
+  border: none;
+  color: #ff4757;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.removeStackBtn:hover {
+  background: #ff4757;
+  color: var(--white);
+}
+
+.addStack {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.addStack select,
+.addStack input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: var(--white);
+  font-family: var(--font-montserrat);
+  font-size: 0.8rem;
+}
+
+.addStackBtn {
+  background: var(--light-blue);
+  border: none;
+  color: var(--dark-blue);
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addStackBtn:hover {
+  background: var(--lighter-blue);
+}
+
+
 .modalActions {
   display: flex;
   gap: 1rem;
@@ -366,5 +461,316 @@
     border-radius: 0;
     border-left: none;
     border-right: none;
+  }
+}
+
+/* Status badges */
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status.planned {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.in-progress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Project header in card */
+.projectHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.projectMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.categoryTag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Project links in card */
+.projectLinks {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.githubLink {
+  background: #333;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.githubLink:hover {
+  background: #555;
+  transform: translateY(-2px);
+}
+
+/* View button */
+.viewBtn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--dark-blue);
+}
+
+.viewBtn:hover {
+  background: var(--light-blue);
+  transform: scale(1.1);
+}
+
+/* Details Modal */
+.detailsModal {
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.detailsContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.detailsMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detailsImage {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.detailsImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detailsInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.infoSection h3 {
+  color: var(--white);
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoItem strong {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.techStackDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.techItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.techCategory {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+.detailsSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detailsSidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detailsSidebar li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.detailsSidebar li:last-child {
+  border-bottom: none;
+}
+
+/* Form improvements */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.arrayManagement {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1rem;
+}
+
+.arrayManagement h4 {
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.arrayItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.removeArrayBtn {
+  background: transparent;
+  border: none;
+  color: #ff4757;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.removeArrayBtn:hover {
+  background: #ff4757;
+  color: var(--white);
+}
+
+.addArrayItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.addArrayItem input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: var(--white);
+  font-family: var(--font-montserrat);
+  font-size: 0.8rem;
+}
+
+.addArrayBtn {
+  background: var(--light-blue);
+  border: none;
+  color: var(--dark-blue);
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addArrayBtn:hover {
+  background: var(--lighter-blue);
+}
+
+/* Responsive design for details modal */
+@media (max-width: 768px) {
+  .detailsContent {
+    grid-template-columns: 1fr;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .infoGrid {
+    grid-template-columns: 1fr;
   }
 }
