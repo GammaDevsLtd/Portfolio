@@ -1,4 +1,3 @@
-/* components/AdminPanel/Forms/Forms.module.css */
 .container {
   padding: 2rem;
   min-height: 100vh;
@@ -448,6 +447,174 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Empty State Styles */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  margin: 2rem 0;
+  transition: all 0.3s ease;
+  min-height: 400px;
+}
+
+.emptyState:hover {
+  border-color: rgba(50, 208, 235, 0.4);
+  background: rgba(50, 208, 235, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(50, 208, 235, 0.1);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  color: rgba(50, 208, 235, 0.7);
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.emptyState:hover .emptyIcon {
+  color: var(--light-blue);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.emptyState h3 {
+  color: var(--white);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.emptyState p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  max-width: 300px;
+}
+
+.emptyState .addButton {
+  background: var(--light-blue);
+  color: var(--dark-blue);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(50, 208, 235, 0.3);
+}
+
+.emptyState .addButton:hover {
+  background: var(--lighter-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(50, 208, 235, 0.4);
+}
+
+.emptyState .addButton:active {
+  transform: translateY(0);
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--white);
+  text-align: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 2rem;
+  color: var(--light-blue);
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  color: var(--white);
+}
+
+/* Responsive Design for Empty State */
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 3rem 1.5rem;
+    min-height: 350px;
+    margin: 1rem 0;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+  }
+
+  .emptyState h3 {
+    font-size: 1.25rem;
+  }
+
+  .emptyState p {
+    font-size: 0.9rem;
+    max-width: 250px;
+  }
+
+  .emptyState .addButton {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .emptyState {
+    padding: 2rem 1rem;
+    min-height: 300px;
+    border-radius: 16px;
+  }
+
+  .emptyIcon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .emptyState h3 {
+    font-size: 1.1rem;
+  }
+
+  .emptyState p {
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
@@ -779,4 +946,205 @@
   color: rgba(255, 255, 255, 0.7);
   font-style: italic;
   margin-top: 0.25rem;
+}
+
+/* Refresh Button Styles */
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.refreshButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-family: var(--font-montserrat);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: rgba(50, 208, 235, 0.2);
+  border-color: var(--light-blue);
+  color: var(--light-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(50, 208, 235, 0.2);
+}
+
+.refreshButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.refreshButton:disabled:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  box-shadow: none;
+}
+
+/* Loading Overlay Styles */
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(15px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: var(--white);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.loadingOverlay .spinner {
+  font-size: 3rem;
+  color: var(--light-blue);
+  margin-bottom: 1.5rem;
+  animation: spin 1.5s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(50, 208, 235, 0.5));
+}
+
+.loadingOverlay p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--white);
+  margin: 0;
+  animation: pulse 2s ease-in-out infinite;
+  text-align: center;
+}
+
+/* Enhanced Spinner Animation */
+@keyframes spin {
+  0% { 
+    transform: rotate(0deg);
+  }
+  100% { 
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse Animation for Text */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Loading State for Initial Load */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  text-align: center;
+  color: var(--white);
+}
+
+.loading .spinner {
+  font-size: 3rem;
+  color: var(--light-blue);
+  margin-bottom: 1.5rem;
+  animation: spin 1.5s linear infinite;
+}
+
+.loading p {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .refreshButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    align-self: flex-start;
+  }
+  
+  .loadingOverlay .spinner {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .loadingOverlay p {
+    font-size: 1.1rem;
+  }
+  
+  .loading .spinner {
+    font-size: 2.5rem;
+  }
+  
+  .loading p {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .refreshButton {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.8rem;
+  }
+  
+  .loadingOverlay .spinner {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loadingOverlay p {
+    font-size: 1rem;
+  }
+  
+  .loading {
+    padding: 4rem 1rem;
+  }
+  
+  .loading .spinner {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loading p {
+    font-size: 1rem;
+  }
 }

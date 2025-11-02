@@ -1,71 +1,64 @@
-import ClientRequestModel from "@/libs/models/ClientRequestModel";
-import nodemailer from "nodemailer";
-import { NextResponse } from "next/server";
 import { connectMongoDB } from "@/libs/config/db";
+import { ClientRequestModel } from "@/libs/models/ClientRequestModel";
 
-export async function POST(req) {
+// Handle contact form submissions
+export async function POST(request) {
   try {
     await connectMongoDB();
-    const data = await req.formData();
+    
+    const body = await request.json();
+    const { name, email, subject, message } = body;
 
-    const name = data.get("name");
-    const email = data.get("email");
-    const phone = data.get("phone");
-    const company = data.get("company");
-    const projectType = data.get("projectType");
-    const budget = data.get("budget");
-    const timeline = data.get("timeline");
-    const description = data.get("description");
-    const files = data.getAll("files"); // Handle if files exist
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Name, email, subject, and message are required' 
+        }),
+        { 
+          status: 400, 
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
-    // Save to DB
-    const newRequest = await ClientRequestModel.create({
-      id: `req-${Date.now()}`,
+    // Generate unique ID for the contact request
+    const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    const newContactRequest = new ClientRequestModel({
+      id: requestId,
       type: "contact_form",
       name,
       email,
-      subject: "New Contact Form Submission",
-      message: description,
-      formData: { projectType, budget, timeline, phone, company },
+      subject,
+      message,
+      submittedAt: new Date(),
+      status: "new",
+      replies: [],
+      formId: null, // Not applicable for contact forms
+      formData: null // Not applicable for contact forms
     });
 
-    // Optional: Send email to admin
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_EMAIL_PASSWORD,
-      },
-    });
-
-    const mailOptions = {
-      from: email,
-      to: process.env.ADMIN_EMAIL,
-      subject: `New Project Request from ${name}`,
-      html: `
-        <h3>New Project Request</h3>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Company:</b> ${company}</p>
-        <p><b>Project Type:</b> ${projectType}</p>
-        <p><b>Budget:</b> ${budget}</p>
-        <p><b>Timeline:</b> ${timeline}</p>
-        <p><b>Description:</b> ${description}</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json(
-      { success: true, message: "Form submitted successfully." },
-      { status: 200 }
+    const savedRequest = await newContactRequest.save();
+    
+    return new Response(
+      JSON.stringify({ 
+        message: 'Contact request submitted successfully',
+        request: savedRequest 
+      }),
+      {
+        status: 201,
+        headers: { 'Content-Type': 'application/json' },
+      }
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { success: false, message: "Failed to submit form." },
-      { status: 500 }
+    console.error('Error creating contact request:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to submit contact request' }),
+      { 
+        status: 500, 
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }

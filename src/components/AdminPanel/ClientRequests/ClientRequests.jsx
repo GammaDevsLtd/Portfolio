@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ClientRequests.module.css";
 import {
   FiMail,
@@ -13,100 +13,91 @@ import {
   FiMessageSquare,
   FiFileText,
   FiCornerDownLeft,
+  FiRefreshCw,
 } from "react-icons/fi";
 import FlexibleSelect from "@/components/UI/FlexibleSelect/FlexibleSelect";
 
-// Sample initial data
-const initialRequests = [
-  {
-    id: "req-1",
-    type: "contact_form",
-    name: "John Doe",
-    email: "john@example.com",
-    subject: "Website Development Inquiry",
-    message:
-      "Hello, I am interested in your web development services. Can we schedule a call to discuss my project requirements?",
-    submittedAt: new Date("2024-01-20T10:30:00").toISOString(),
-    status: "new", // new, replied, closed
-    formData: null,
-    replies: [],
-  },
-  {
-    id: "req-2",
-    type: "form_submission",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    subject: "Customer Feedback Form Submission",
-    message: null,
-    submittedAt: new Date("2024-01-22T14:15:00").toISOString(),
-    status: "replied",
-    formData: {
-      formTitle: "Customer Feedback Form",
-      fields: [
-        { label: "Full Name", value: "Jane Smith" },
-        { label: "Email Address", value: "jane@example.com" },
-        {
-          label: "Feedback",
-          value: "Great service! The team was very professional.",
-        },
-        { label: "Rating", value: "Excellent" },
-      ],
-    },
-    replies: [
-      {
-        id: "reply-1",
-        message:
-          "Thank you for your feedback! We are glad to hear about your positive experience.",
-        sentAt: new Date("2024-01-22T15:00:00").toISOString(),
-        sentBy: "Admin",
-      },
-    ],
-  },
-  {
-    id: "req-3",
-    type: "contact_form",
-    name: "Mike Johnson",
-    email: "mike@techcorp.com",
-    subject: "Partnership Opportunity",
-    message:
-      "We would like to explore potential partnership opportunities with your company. Our team specializes in enterprise solutions and we believe there is synergy between our offerings.",
-    submittedAt: new Date("2024-01-23T09:45:00").toISOString(),
-    status: "closed",
-    formData: null,
-    replies: [
-      {
-        id: "reply-2",
-        message:
-          "Thank you for reaching out. We have forwarded your inquiry to our partnership team and they will contact you shortly.",
-        sentAt: new Date("2024-01-23T10:30:00").toISOString(),
-        sentBy: "Admin",
-      },
-      {
-        id: "reply-3",
-        message:
-          "Following up on our previous conversation. Are you available for a meeting next week?",
-        sentAt: new Date("2024-01-25T11:00:00").toISOString(),
-        sentBy: "Admin",
-      },
-    ],
-  },
-];
-
 const ClientRequests = () => {
-  const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [viewingRequest, setViewingRequest] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyMessage, setReplyMessage] = useState("");
-  const [filter, setFilter] = useState("all"); // all, new, replied, closed
-  const [typeFilter, setTypeFilter] = useState("all"); // all, contact_form, form_submission
+  const [filter, setFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Filter requests based on status and type
-  const filteredRequests = requests.filter((request) => {
-    const statusMatch = filter === "all" || request.status === filter;
-    const typeMatch = typeFilter === "all" || request.type === typeFilter;
-    return statusMatch && typeMatch;
-  });
+  // API Service Functions
+  const clientRequestsAPI = {
+    // GET all client requests with filters
+    getAllRequests: async (statusFilter = "all", typeFilter = "all") => {
+      try {
+        const queryParams = new URLSearchParams();
+        if (statusFilter !== "all") queryParams.append("status", statusFilter);
+        if (typeFilter !== "all") queryParams.append("type", typeFilter);
+
+        const response = await fetch(`/api/client-requests?${queryParams}`);
+        if (!response.ok) throw new Error("Failed to fetch client requests");
+        return await response.json();
+      } catch (error) {
+        throw new Error(`Error fetching client requests: ${error.message}`);
+      }
+    },
+
+    // UPDATE client request (add reply or change status)
+    updateRequest: async (requestId, updateData) => {
+      try {
+        const response = await fetch(`/api/client-requests/${requestId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        });
+        if (!response.ok) throw new Error("Failed to update client request");
+        return await response.json();
+      } catch (error) {
+        throw new Error(`Error updating client request: ${error.message}`);
+      }
+    },
+
+    // DELETE client request
+    deleteRequest: async (requestId) => {
+      try {
+        const response = await fetch(`/api/client-requests/${requestId}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) throw new Error("Failed to delete client request");
+        return await response.json();
+      } catch (error) {
+        throw new Error(`Error deleting client request: ${error.message}`);
+      }
+    },
+  };
+
+  // Load requests on component mount and when filters change
+  useEffect(() => {
+    loadRequests();
+  }, [filter, typeFilter]);
+
+  // Load all requests from API
+  const loadRequests = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const requestsData = await clientRequestsAPI.getAllRequests(
+        filter,
+        typeFilter
+      );
+      setRequests(requestsData);
+    } catch (err) {
+      setError(err.message);
+      console.error("Error loading client requests:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // View request details
   const handleViewRequest = (request) => {
@@ -120,54 +111,103 @@ const ClientRequests = () => {
   };
 
   // Send reply
-  const handleSendReply = () => {
+  const handleSendReply = async () => {
     if (!replyMessage.trim()) {
       alert("Please enter a reply message.");
       return;
     }
 
-    const newReply = {
-      id: `reply-${Date.now()}`,
-      message: replyMessage,
-      sentAt: new Date().toISOString(),
-      sentBy: "Admin",
-    };
+    setLoading(true);
+    try {
+      const newReply = {
+        id: `reply-${Date.now()}`,
+        message: replyMessage,
+        sentAt: new Date().toISOString(),
+        sentBy: "Admin",
+      };
 
-    setRequests((prev) =>
-      prev.map((request) =>
-        request.id === replyingTo.id
-          ? {
-              ...request,
-              status: "replied",
-              replies: [...request.replies, newReply],
-            }
-          : request
-      )
-    );
+      const updatedRequest = await clientRequestsAPI.updateRequest(
+        replyingTo.id,
+        {
+          status: "replied",
+          replies: [...replyingTo.replies, newReply],
+        }
+      );
 
-    // In a real app, you would send the email here
-    console.log("Sending email to:", replyingTo.email);
-    console.log("Subject: Re:", replyingTo.subject);
-    console.log("Message:", replyMessage);
+      // Update local state
+      setRequests((prev) =>
+        prev.map((request) =>
+          request.id === replyingTo.id ? updatedRequest : request
+        )
+      );
 
-    setReplyingTo(null);
-    setReplyMessage("");
-    alert("Reply sent successfully!");
+      // Update viewing request if it's the same
+      if (viewingRequest && viewingRequest.id === replyingTo.id) {
+        setViewingRequest(updatedRequest);
+      }
+
+      // In a real app, you would send the email here
+      console.log("Sending email to:", replyingTo.email);
+      console.log("Subject: Re:", replyingTo.subject);
+      console.log("Message:", replyMessage);
+
+      setReplyingTo(null);
+      setReplyMessage("");
+      alert("Reply sent successfully!");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Mark request as closed
-  const handleMarkAsClosed = (requestId) => {
-    setRequests((prev) =>
-      prev.map((request) =>
-        request.id === requestId ? { ...request, status: "closed" } : request
-      )
-    );
+  const handleMarkAsClosed = async (requestId) => {
+    setLoading(true);
+    try {
+      const updatedRequest = await clientRequestsAPI.updateRequest(requestId, {
+        status: "closed",
+      });
+
+      setRequests((prev) =>
+        prev.map((request) =>
+          request.id === requestId ? updatedRequest : request
+        )
+      );
+
+      // Update viewing request if it's the same
+      if (viewingRequest && viewingRequest.id === requestId) {
+        setViewingRequest(updatedRequest);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Delete request
-  const handleDeleteRequest = (requestId) => {
-    if (confirm("Are you sure you want to delete this request?")) {
+  const handleDeleteRequest = async (requestId) => {
+    if (!confirm("Are you sure you want to delete this request?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await clientRequestsAPI.deleteRequest(requestId);
       setRequests((prev) => prev.filter((request) => request.id !== requestId));
+
+      // Close modals if viewing the deleted request
+      if (viewingRequest && viewingRequest.id === requestId) {
+        setViewingRequest(null);
+      }
+      if (replyingTo && replyingTo.id === requestId) {
+        setReplyingTo(null);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -212,6 +252,17 @@ const ClientRequests = () => {
     });
   };
 
+  if (loading && requests.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>
+          <FiRefreshCw className={styles.spinner} />
+          <p>Loading client requests...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -219,22 +270,30 @@ const ClientRequests = () => {
         <div className={styles.headerLeft}>
           <h1 className={styles.title}>Client Requests</h1>
           <div className={styles.stats}>
-            <span className={styles.stat}>
+            <div className={styles.stat}>
               Total: <strong>{requests.length}</strong>
-            </span>
-            <span className={styles.stat}>
+            </div>
+            <div className={styles.stat}>
               New:{" "}
               <strong>
                 {requests.filter((r) => r.status === "new").length}
               </strong>
-            </span>
-            <span className={styles.stat}>
+            </div>
+            <div className={styles.stat}>
               Replied:{" "}
               <strong>
                 {requests.filter((r) => r.status === "replied").length}
               </strong>
-            </span>
+            </div>
           </div>
+          <button
+            className={styles.refreshButton}
+            onClick={loadRequests}
+            disabled={loading}
+          >
+            <FiRefreshCw className={loading ? styles.spinner : ""} />
+            {loading ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
 
         <div className={styles.filters}>
@@ -269,16 +328,23 @@ const ClientRequests = () => {
         </div>
       </div>
 
+      {error && (
+        <div className={styles.error}>
+          <p>{error}</p>
+          <button onClick={() => setError(null)}>×</button>
+        </div>
+      )}
+
       {/* Requests List */}
       <div className={styles.requestsList}>
-        {filteredRequests.length === 0 ? (
+        {requests.length === 0 ? (
           <div className={styles.emptyState}>
             <FiMail className={styles.emptyIcon} />
             <h3>No requests found</h3>
             <p>There are no client requests matching your current filters.</p>
           </div>
         ) : (
-          filteredRequests.map((request) => {
+          requests.map((request) => {
             const statusInfo = getStatusInfo(request.status);
             const typeInfo = getTypeInfo(request.type);
 
@@ -304,6 +370,7 @@ const ClientRequests = () => {
                       className={styles.viewBtn}
                       onClick={() => handleViewRequest(request)}
                       title="View Details"
+                      disabled={loading}
                     >
                       <FiEye />
                     </button>
@@ -311,7 +378,7 @@ const ClientRequests = () => {
                       className={styles.replyBtn}
                       onClick={() => handleStartReply(request)}
                       title="Reply"
-                      disabled={request.status === "closed"}
+                      disabled={request.status === "closed" || loading}
                     >
                       <FiCornerDownLeft />
                     </button>
@@ -319,7 +386,7 @@ const ClientRequests = () => {
                       className={styles.closeBtn}
                       onClick={() => handleMarkAsClosed(request.id)}
                       title="Mark as Closed"
-                      disabled={request.status === "closed"}
+                      disabled={request.status === "closed" || loading}
                     >
                       <FiCheckCircle />
                     </button>
@@ -327,6 +394,7 @@ const ClientRequests = () => {
                       className={styles.deleteBtn}
                       onClick={() => handleDeleteRequest(request.id)}
                       title="Delete Request"
+                      disabled={loading}
                     >
                       <FiTrash2 />
                     </button>
@@ -377,6 +445,14 @@ const ClientRequests = () => {
         )}
       </div>
 
+      {/* Loading overlay */}
+      {loading && (
+        <div className={styles.loadingOverlay}>
+          <FiRefreshCw className={styles.spinner} />
+          <p>Processing...</p>
+        </div>
+      )}
+
       {/* Request Detail Modal */}
       {viewingRequest && (
         <div className={styles.modalOverlay}>
@@ -386,6 +462,7 @@ const ClientRequests = () => {
               <button
                 onClick={() => setViewingRequest(null)}
                 className={styles.closeModalBtn}
+                disabled={loading}
               >
                 <FiX />
               </button>
@@ -439,12 +516,25 @@ const ClientRequests = () => {
                       Form Submission: {viewingRequest.formData?.formTitle}
                     </h5>
                     <div className={styles.formFields}>
-                      {viewingRequest.formData?.fields.map((field, index) => (
-                        <div key={index} className={styles.formField}>
-                          <label>{field.label}:</label>
-                          <span>{field.value}</span>
-                        </div>
-                      ))}
+                      {viewingRequest.formData?.submissionData
+                        ? // For new schema with submissionData Map
+                          Object.entries(
+                            viewingRequest.formData.submissionData
+                          ).map(([fieldId, value], index) => (
+                            <div key={index} className={styles.formField}>
+                              <label>{fieldId}:</label>
+                              <span>{value}</span>
+                            </div>
+                          ))
+                        : // Fallback for old schema with fields array
+                          viewingRequest.formData?.fields?.map(
+                            (field, index) => (
+                              <div key={index} className={styles.formField}>
+                                <label>{field.label}:</label>
+                                <span>{field.value}</span>
+                              </div>
+                            )
+                          ) || <p>No form data available</p>}
                     </div>
                   </div>
                 )}
@@ -472,20 +562,21 @@ const ClientRequests = () => {
                 <button
                   onClick={() => handleStartReply(viewingRequest)}
                   className={styles.replyBtn}
-                  disabled={viewingRequest.status === "closed"}
+                  disabled={viewingRequest.status === "closed" || loading}
                 >
                   <FiCornerDownLeft /> Reply
                 </button>
                 <button
                   onClick={() => handleMarkAsClosed(viewingRequest.id)}
                   className={styles.closeBtn}
-                  disabled={viewingRequest.status === "closed"}
+                  disabled={viewingRequest.status === "closed" || loading}
                 >
                   <FiCheckCircle /> Mark as Closed
                 </button>
                 <button
                   onClick={() => setViewingRequest(null)}
                   className={styles.cancelBtn}
+                  disabled={loading}
                 >
                   <FiX /> Close
                 </button>
@@ -504,6 +595,7 @@ const ClientRequests = () => {
               <button
                 onClick={() => setReplyingTo(null)}
                 className={styles.closeModalBtn}
+                disabled={loading}
               >
                 <FiX />
               </button>
@@ -528,6 +620,7 @@ const ClientRequests = () => {
                   placeholder="Type your reply message here..."
                   rows="8"
                   className={styles.replyTextarea}
+                  disabled={loading}
                 />
               </div>
 
@@ -535,13 +628,19 @@ const ClientRequests = () => {
                 <button
                   onClick={handleSendReply}
                   className={styles.sendBtn}
-                  disabled={!replyMessage.trim()}
+                  disabled={!replyMessage.trim() || loading}
                 >
-                  <FiSend /> Send Reply
+                  {loading ? (
+                    <FiRefreshCw className={styles.spinner} />
+                  ) : (
+                    <FiSend />
+                  )}
+                  Send Reply
                 </button>
                 <button
                   onClick={() => setReplyingTo(null)}
                   className={styles.cancelBtn}
+                  disabled={loading}
                 >
                   <FiX /> Cancel
                 </button>
