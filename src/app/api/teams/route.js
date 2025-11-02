@@ -101,3 +101,46 @@ export async function DELETE(req) {
     );
   }
 }
+
+
+export async function PUT(req) {
+  try {
+    const { id, ...updateData } = await req.json();
+    console.log("Updating member with ID:", id);
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Team member ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await connectMongoDB();
+
+    const updatedTeamMember = await TeamModel.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true } // ✅ return the updated document
+    );
+
+    if (!updatedTeamMember) {
+      return NextResponse.json(
+        { message: "Team member not found" },
+        { status: 404 }
+      );
+    }
+
+    console.log("Team member updated successfully:", id);
+
+    return NextResponse.json(
+      { message: "Team member updated successfully", teamMember: updatedTeamMember },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating team member:", error);
+    return NextResponse.json(
+      { message: "Error updating team member", error: error.message },
+      { status: 500 }
+    );
+  }
+}

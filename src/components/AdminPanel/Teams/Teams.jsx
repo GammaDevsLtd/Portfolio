@@ -202,6 +202,10 @@ const Teams = () => {
         throw new Error(errorData.message || "Failed to create team member");
       }
 
+      if(response.ok){
+        window.location.reload();
+      }
+
       return await response.json();
     } catch (error) {
       console.error("Error creating team member:", error);
@@ -211,12 +215,12 @@ const Teams = () => {
 
   const updateTeamMember = async (id, memberData) => {
     try {
-      const response = await fetch(`/api/teams/${id}`, {
+      const response = await fetch(`/api/teams`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(memberData),
+        body: JSON.stringify({ id, ...memberData }), // ✅ send ID and update data together
       });
 
       if (!response.ok) {
@@ -284,10 +288,8 @@ const Teams = () => {
         image: imageUrl,
       };
 
-      const updatedMember = await updateTeamMember(
-        editingMember.id,
-        memberData
-      );
+      const response = await updateTeamMember(editingMember.id, memberData);
+      const updatedMember = response.teamMember;
 
       setTeamMembers((prev) =>
         prev.map((member) =>
