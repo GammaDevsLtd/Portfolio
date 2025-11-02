@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -14,6 +15,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,15 +45,16 @@ const LoginPage = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Registration failed");
+        setError(data.message || "Login failed");
       }
 
       if (res.ok) {
-        setSuccess(data.message || "Registration Successful");
+        setSuccess(data.message || "Login Successful");
+        router.push("/login")
       }
     } catch (error) {
-      console.error("Registration error:", error);
-      setError(error.message || "An error occurred during registration");
+      console.error("Login error:", error);
+      setError(error.message || "An error occurred during Login");
     } finally {
       setLoading(false);
     }
