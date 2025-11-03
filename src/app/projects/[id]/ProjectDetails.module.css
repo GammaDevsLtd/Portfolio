@@ -660,3 +660,138 @@
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
   }
 }
+
+/* Loading State */
+.loadingState {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--black);
+}
+
+.loadingState .spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid var(--light-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 2rem;
+}
+
+.loadingState h2 {
+  font-family: var(--font-raleway);
+  font-size: 2rem;
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.loadingState p {
+  font-family: var(--font-montserrat);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+}
+
+/* Error State */
+.errorState {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--black);
+}
+
+.errorState h2 {
+  font-family: var(--font-raleway);
+  font-size: 2.5rem;
+  color: var(--white);
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, var(--lighter-blue) 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.errorState p {
+  font-family: var(--font-montserrat);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.retryButton {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--light-blue), var(--lighter-blue));
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 2rem;
+  font-family: var(--font-montserrat);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(108, 224, 246, 0.3);
+}
+
+/* Status styles for header */
+.status.planned {
+  background: rgba(254, 243, 199, 0.2);
+  color: #92400e;
+  border: 1px solid #92400e;
+}
+
+.status.in-progress {
+  background: rgba(219, 234, 254, 0.2);
+  color: #1e40af;
+  border: 1px solid #1e40af;
+}
+
+.status.completed {
+  background: rgba(209, 250, 229, 0.2);
+  color: #065f46;
+  border: 1px solid #065f46;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for new states */
+@media (max-width: 768px) {
+  .loadingState h2 {
+    font-size: 1.5rem;
+  }
+  
+  .errorState h2 {
+    font-size: 2rem;
+  }
+  
+  .errorActions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .retryButton {
+    width: 200px;
+  }
+}

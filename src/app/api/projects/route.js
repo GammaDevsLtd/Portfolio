@@ -9,9 +9,9 @@ export async function POST(req) {
         console.log("Received project data:", projectData);
 
         // Validate required fields
-        if (!projectData.title || !projectData.description || !projectData.backgroundImage) {
+        if (!projectData.title || !projectData.description) {
             return NextResponse.json(
-                { message: "Missing required fields: title, description, and backgroundImage are required" },
+                { message: "Missing required fields: title and description are required" },
                 { status: 400 }
             );
         }
@@ -25,9 +25,9 @@ export async function POST(req) {
             detailedDescription: projectData.detailedDescription || "",
             category: projectData.category || [],
             images: projectData.images || [],
-            backgroundImage: projectData.backgroundImage,
-            liveLink: projectData.liveLink || "#",
-            githubLink: projectData.githubLink || "#",
+            backgroundImage: projectData.backgroundImage || "",
+            liveLink: projectData.liveLink || "",
+            githubLink: projectData.githubLink || "",
             techStack: projectData.techStack || [],
             features: projectData.features || [],
             challenges: projectData.challenges || [],
@@ -141,9 +141,9 @@ export async function PUT(req) {
                 detailedDescription: updateData.detailedDescription || "",
                 category: updateData.category || [],
                 images: updateData.images || [],
-                backgroundImage: updateData.backgroundImage,
-                liveLink: updateData.liveLink || "#",
-                githubLink: updateData.githubLink || "#",
+                backgroundImage: updateData.backgroundImage || "",
+                liveLink: updateData.liveLink || "",
+                githubLink: updateData.githubLink || "",
                 techStack: updateData.techStack || [],
                 features: updateData.features || [],
                 challenges: updateData.challenges || [],

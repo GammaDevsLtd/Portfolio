@@ -17,7 +17,8 @@ import axios from "axios";
 
 // Cloudinary configuration
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_UPLOAD_PRESET =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 const CLOUDINARY_FOLDER = process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
 
 // IMPORTED ICON STACKS
@@ -40,12 +41,21 @@ import { SiFramer, SiVuedotjs, SiFirebase } from "react-icons/si";
 import { IoPrism } from "react-icons/io5";
 import { HiMiniCircleStack } from "react-icons/hi2";
 
+// Category options - matches your requirements
+const categoryOptions = [
+  { value: "Frontend Websites", label: "Frontend Websites" },
+  { value: "Fullstack Websites", label: "Fullstack Websites" },
+  { value: "UI UX", label: "UI/UX" },
+];
+
 const initialProjects = [
   {
     id: 1,
     title: "Aces Voting",
-    description: "A website focused on prompting users to vote for their favorite contestants.",
-    detailedDescription: "A comprehensive voting platform with real-time results and user authentication.",
+    description:
+      "A website focused on prompting users to vote for their favorite contestants.",
+    detailedDescription:
+      "A comprehensive voting platform with real-time results and user authentication.",
     category: ["Web App", "Full Stack"],
     images: ["/about.jpg", "/project1-2.jpg"],
     backgroundImage: "/about.jpg",
@@ -114,17 +124,20 @@ const Projects = () => {
 
   // State to manage the selected stack from the dropdown before adding it
   const [newStack, setNewStack] = useState("");
-  const [newCategory, setNewCategory] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [newFeature, setNewFeature] = useState("");
   const [newChallenge, setNewChallenge] = useState("");
   const [newSolution, setNewSolution] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [backgroundImageFile, setBackgroundImageFile] = useState(null);
+  const [backgroundImagePreview, setBackgroundImagePreview] = useState(null);
+  const [projectImagesFiles, setProjectImagesFiles] = useState([]);
+  const [projectImagesPreviews, setProjectImagesPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const fileInputRef = useRef(null);
+  const backgroundFileInputRef = useRef(null);
+  const projectImagesFileInputRef = useRef(null);
 
   // Function to render icon based on string value
   const renderIcon = (iconName) => {
@@ -176,8 +189,8 @@ const Projects = () => {
     }
   };
 
-  // Handle image file selection
-  const handleImageChange = (e, isNew = false) => {
+  // Handle background image file selection
+  const handleBackgroundImageChange = (e, isNew = false) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -193,32 +206,120 @@ const Projects = () => {
       return;
     }
 
-    setImageFile(file);
+    setBackgroundImageFile(file);
 
     // Create preview
     const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
+    setBackgroundImagePreview(previewUrl);
 
     // Update the appropriate state
     if (isNew) {
-      setNewProject(prev => ({ ...prev, backgroundImage: previewUrl }));
+      setNewProject((prev) => ({ ...prev, backgroundImage: previewUrl }));
     } else {
-      setEditingProject(prev => ({ ...prev, backgroundImage: previewUrl }));
+      setEditingProject((prev) => ({ ...prev, backgroundImage: previewUrl }));
     }
 
     setError("");
   };
 
-  // Clear preview when component unmounts or modals close
+  // Handle project images file selection (up to 3)
+  const handleProjectImagesChange = (e, isNew = false) => {
+    const files = Array.from(e.target.files);
+
+    // Limit to 3 images
+    if (files.length > 3) {
+      setError("You can only upload up to 3 project images");
+      return;
+    }
+
+    // Validate each file
+    for (let file of files) {
+      if (!file.type.startsWith("image/")) {
+        setError("Please select image files only");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setError("Each image must be less than 10MB");
+        return;
+      }
+    }
+
+    setProjectImagesFiles(files);
+
+    // Create previews
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setProjectImagesPreviews(previews);
+
+    // Update the appropriate state
+    if (isNew) {
+      setNewProject((prev) => ({ ...prev, images: previews }));
+    } else {
+      setEditingProject((prev) => ({ ...prev, images: previews }));
+    }
+
+    setError("");
+  };
+
+  // Remove a project image
+  const removeProjectImage = (index, isNew = false) => {
+    if (isNew) {
+      const newPreviews = [...projectImagesPreviews];
+      const newFiles = [...projectImagesFiles];
+
+      URL.revokeObjectURL(newPreviews[index]);
+      newPreviews.splice(index, 1);
+      newFiles.splice(index, 1);
+
+      setProjectImagesPreviews(newPreviews);
+      setProjectImagesFiles(newFiles);
+      setNewProject((prev) => ({ ...prev, images: newPreviews }));
+    } else {
+      const newPreviews = [...projectImagesPreviews];
+      const newFiles = [...projectImagesFiles];
+
+      URL.revokeObjectURL(newPreviews[index]);
+      newPreviews.splice(index, 1);
+      newFiles.splice(index, 1);
+
+      setProjectImagesPreviews(newPreviews);
+      setProjectImagesFiles(newFiles);
+      setEditingProject((prev) => ({ ...prev, images: newPreviews }));
+    }
+  };
+
+  // Handle category selection
+  const handleCategoryChange = (category, isNew = false) => {
+    if (isNew) {
+      setNewProject((prev) => {
+        const newCategories = prev.category.includes(category)
+          ? prev.category.filter((cat) => cat !== category)
+          : [...prev.category, category];
+        return { ...prev, category: newCategories };
+      });
+    } else {
+      setEditingProject((prev) => {
+        const newCategories = prev.category.includes(category)
+          ? prev.category.filter((cat) => cat !== category)
+          : [...prev.category, category];
+        return { ...prev, category: newCategories };
+      });
+    }
+  };
+
+  // Clear previews when component unmounts or modals close
   useEffect(() => {
     return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
+      if (backgroundImagePreview) {
+        URL.revokeObjectURL(backgroundImagePreview);
       }
+      projectImagesPreviews.forEach((preview) => URL.revokeObjectURL(preview));
     };
-  }, [imagePreview]);
+  }, [backgroundImagePreview, projectImagesPreviews]);
 
   // API functions
+
+  // In your JSX component, update these functions:
+
   const fetchProjects = async () => {
     try {
       const response = await fetch("/api/projects");
@@ -251,11 +352,21 @@ const Projects = () => {
         throw new Error(errorData.message || "Failed to create project");
       }
 
-      if (response.ok) {
+      const result = await response.json();
+
+      // Update local state instead of reloading
+      setProjects((prev) => [
+        ...prev,
+        { ...result.project, id: result.project._id },
+      ]);
+      setSuccess("Project added successfully!");
+      setIsAdding(false);
+      
+      if(response.ok) {
         window.location.reload();
       }
 
-      return await response.json();
+      return result.project;
     } catch (error) {
       console.error("Error creating project:", error);
       throw error;
@@ -277,7 +388,8 @@ const Projects = () => {
         throw new Error(errorData.message || "Failed to update project");
       }
 
-      return await response.json();
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error("Error updating project:", error);
       throw error;
@@ -308,14 +420,14 @@ const Projects = () => {
   const handleAddToArray = (field, value, isNew = false) => {
     if (value.trim()) {
       if (isNew) {
-        setNewProject(prev => ({
+        setNewProject((prev) => ({
           ...prev,
-          [field]: [...prev[field], value.trim()]
+          [field]: [...prev[field], value.trim()],
         }));
       } else {
-        setEditingProject(prev => ({
+        setEditingProject((prev) => ({
           ...prev,
-          [field]: [...prev[field], value.trim()]
+          [field]: [...prev[field], value.trim()],
         }));
       }
     }
@@ -323,14 +435,14 @@ const Projects = () => {
 
   const handleRemoveFromArray = (field, index, isNew = false) => {
     if (isNew) {
-      setNewProject(prev => ({
+      setNewProject((prev) => ({
         ...prev,
-        [field]: prev[field].filter((_, i) => i !== index)
+        [field]: prev[field].filter((_, i) => i !== index),
       }));
     } else {
-      setEditingProject(prev => ({
+      setEditingProject((prev) => ({
         ...prev,
-        [field]: prev[field].filter((_, i) => i !== index)
+        [field]: prev[field].filter((_, i) => i !== index),
       }));
     }
   };
@@ -338,16 +450,18 @@ const Projects = () => {
   // --- Stack Management Functions ---
   const handleAddStack = (isNew = false) => {
     if (newStack) {
-      const stackToAdd = availableStacks.find(stack => stack.value === newStack);
+      const stackToAdd = availableStacks.find(
+        (stack) => stack.value === newStack
+      );
       if (!stackToAdd) return;
 
       if (isNew) {
-        setNewProject(prev => ({
+        setNewProject((prev) => ({
           ...prev,
           techStack: [...prev.techStack, stackToAdd],
         }));
       } else {
-        setEditingProject(prev => ({
+        setEditingProject((prev) => ({
           ...prev,
           techStack: [...prev.techStack, stackToAdd],
         }));
@@ -358,12 +472,12 @@ const Projects = () => {
 
   const handleRemoveStack = (index, isNew = false) => {
     if (isNew) {
-      setNewProject(prev => ({
+      setNewProject((prev) => ({
         ...prev,
         techStack: prev.techStack.filter((_, i) => i !== index),
       }));
     } else {
-      setEditingProject(prev => ({
+      setEditingProject((prev) => ({
         ...prev,
         techStack: prev.techStack.filter((_, i) => i !== index),
       }));
@@ -374,8 +488,10 @@ const Projects = () => {
   const handleEdit = (project) => {
     setIsEditing(true);
     setEditingProject({ ...project });
-    setImagePreview(project.backgroundImage || null);
-    setImageFile(null);
+    setBackgroundImagePreview(project.backgroundImage || null);
+    setProjectImagesPreviews(project.images || []);
+    setBackgroundImageFile(null);
+    setProjectImagesFiles([]);
     setError("");
     setSuccess("");
   };
@@ -391,23 +507,35 @@ const Projects = () => {
 
     try {
       let backgroundImageUrl = editingProject.backgroundImage;
+      let projectImagesUrls = editingProject.images || [];
 
-      // Upload new image if selected
-      if (imageFile) {
-        const uploadResult = await uploadToCloudinary(imageFile);
+      // Upload new background image if selected
+      if (backgroundImageFile) {
+        const uploadResult = await uploadToCloudinary(backgroundImageFile);
         backgroundImageUrl = uploadResult.url;
+      }
+
+      // Upload new project images if selected
+      if (projectImagesFiles.length > 0) {
+        const uploadedImages = [];
+        for (let file of projectImagesFiles) {
+          const uploadResult = await uploadToCloudinary(file);
+          uploadedImages.push(uploadResult.url);
+        }
+        projectImagesUrls = uploadedImages;
       }
 
       const projectData = {
         ...editingProject,
         backgroundImage: backgroundImageUrl,
+        images: projectImagesUrls,
       };
 
       const response = await updateProject(editingProject.id, projectData);
       const updatedProject = response.project;
 
-      setProjects(prev =>
-        prev.map(project =>
+      setProjects((prev) =>
+        prev.map((project) =>
           project.id === editingProject.id ? updatedProject : project
         )
       );
@@ -415,8 +543,10 @@ const Projects = () => {
       setSuccess("Project updated successfully!");
       setIsEditing(false);
       setEditingProject(null);
-      setImageFile(null);
-      setImagePreview(null);
+      setBackgroundImageFile(null);
+      setBackgroundImagePreview(null);
+      setProjectImagesFiles([]);
+      setProjectImagesPreviews([]);
     } catch (error) {
       setError(error.message || "Failed to update project");
     } finally {
@@ -427,8 +557,10 @@ const Projects = () => {
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditingProject(null);
-    setImageFile(null);
-    setImagePreview(null);
+    setBackgroundImageFile(null);
+    setBackgroundImagePreview(null);
+    setProjectImagesFiles([]);
+    setProjectImagesPreviews([]);
     setError("");
     setSuccess("");
   };
@@ -438,7 +570,7 @@ const Projects = () => {
 
     try {
       await deleteProject(id);
-      setProjects(prev => prev.filter(project => project.id !== id));
+      setProjects((prev) => prev.filter((project) => project.id !== id));
       setSuccess("Project deleted successfully!");
     } catch (error) {
       setError(error.message || "Failed to delete project");
@@ -464,8 +596,10 @@ const Projects = () => {
       timeline: "",
       teamSize: 1,
     });
-    setImageFile(null);
-    setImagePreview(null);
+    setBackgroundImageFile(null);
+    setBackgroundImagePreview(null);
+    setProjectImagesFiles([]);
+    setProjectImagesPreviews([]);
     setError("");
     setSuccess("");
   };
@@ -476,7 +610,7 @@ const Projects = () => {
       return;
     }
 
-    if (!imageFile) {
+    if (!backgroundImageFile) {
       setError("Please select a background image");
       return;
     }
@@ -485,17 +619,27 @@ const Projects = () => {
     setError("");
 
     try {
-      // Upload image to Cloudinary
-      const uploadResult = await uploadToCloudinary(imageFile);
+      // Upload background image to Cloudinary
+      const backgroundUploadResult = await uploadToCloudinary(
+        backgroundImageFile
+      );
+
+      // Upload project images to Cloudinary
+      const projectImagesUrls = [];
+      for (let file of projectImagesFiles) {
+        const uploadResult = await uploadToCloudinary(file);
+        projectImagesUrls.push(uploadResult.url);
+      }
 
       const projectData = {
         ...newProject,
-        backgroundImage: uploadResult.url,
+        backgroundImage: backgroundUploadResult.url,
+        images: projectImagesUrls,
       };
 
       const createdProject = await createProject(projectData);
 
-      setProjects(prev => [...prev, createdProject]);
+      setProjects((prev) => [...prev, createdProject]);
       setSuccess("Project added successfully!");
       setIsAdding(false);
       setNewProject({
@@ -515,8 +659,10 @@ const Projects = () => {
         timeline: "",
         teamSize: 1,
       });
-      setImageFile(null);
-      setImagePreview(null);
+      setBackgroundImageFile(null);
+      setBackgroundImagePreview(null);
+      setProjectImagesFiles([]);
+      setProjectImagesPreviews([]);
     } catch (error) {
       setError(error.message || "Failed to add project");
     } finally {
@@ -543,8 +689,10 @@ const Projects = () => {
       timeline: "",
       teamSize: 1,
     });
-    setImageFile(null);
-    setImagePreview(null);
+    setBackgroundImageFile(null);
+    setBackgroundImagePreview(null);
+    setProjectImagesFiles([]);
+    setProjectImagesPreviews([]);
     setError("");
     setSuccess("");
   };
@@ -592,7 +740,11 @@ const Projects = () => {
               {project.techStack && project.techStack.length > 0 && (
                 <div className={styles.techStack}>
                   {project.techStack.map((stack, index) => (
-                    <span className={styles.techIcon} key={index} title={stack.name}>
+                    <span
+                      className={styles.techIcon}
+                      key={index}
+                      title={stack.name}
+                    >
                       {renderIcon(stack.value)}
                     </span>
                   ))}
@@ -652,14 +804,20 @@ const Projects = () => {
             <div className={styles.cardContent}>
               <div className={styles.projectHeader}>
                 <h3 className={styles.projectTitle}>{project.title}</h3>
-                <span className={`${styles.status} ${styles[project.status.toLowerCase().replace(' ', '-')]}`}>
+                <span
+                  className={`${styles.status} ${
+                    styles[project.status.toLowerCase().replace(" ", "-")]
+                  }`}
+                >
                   {project.status}
                 </span>
               </div>
               <p className={styles.projectDescription}>{project.description}</p>
               <div className={styles.projectMeta}>
                 {project.category.map((cat, index) => (
-                  <span key={index} className={styles.categoryTag}>{cat}</span>
+                  <span key={index} className={styles.categoryTag}>
+                    {cat}
+                  </span>
                 ))}
               </div>
             </div>
@@ -677,23 +835,37 @@ const Projects = () => {
                 <FiX />
               </button>
             </div>
-            
+
             <div className={styles.detailsContent}>
               <div className={styles.detailsMain}>
                 <div className={styles.detailsImage}>
-                  <img src={viewingProject.backgroundImage} alt={viewingProject.title} />
+                  <img
+                    src={viewingProject.backgroundImage}
+                    alt={viewingProject.title}
+                  />
                 </div>
-                
+
                 <div className={styles.detailsInfo}>
                   <div className={styles.infoSection}>
                     <h3>Description</h3>
-                    <p>{viewingProject.detailedDescription || viewingProject.description}</p>
+                    <p>
+                      {viewingProject.detailedDescription ||
+                        viewingProject.description}
+                    </p>
                   </div>
 
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <strong>Status:</strong>
-                      <span className={`${styles.status} ${styles[viewingProject.status.toLowerCase().replace(' ', '-')]}`}>
+                      <span
+                        className={`${styles.status} ${
+                          styles[
+                            viewingProject.status
+                              .toLowerCase()
+                              .replace(" ", "-")
+                          ]
+                        }`}
+                      >
                         {viewingProject.status}
                       </span>
                     </div>
@@ -711,8 +883,27 @@ const Projects = () => {
                     <h3>Categories</h3>
                     <div className={styles.categories}>
                       {viewingProject.category.map((cat, index) => (
-                        <span key={index} className={styles.categoryTag}>{cat}</span>
+                        <span key={index} className={styles.categoryTag}>
+                          {cat}
+                        </span>
                       ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.infoSection}>
+                    <h3>Project Images</h3>
+                    <div className={styles.projectImagesGrid}>
+                      {viewingProject.images &&
+                        viewingProject.images.map((image, index) => (
+                          <div key={index} className={styles.projectImageThumb}>
+                            <img
+                              src={image}
+                              alt={`${viewingProject.title} screenshot ${
+                                index + 1
+                              }`}
+                            />
+                          </div>
+                        ))}
                     </div>
                   </div>
 
@@ -725,7 +916,9 @@ const Projects = () => {
                             {renderIcon(stack.value)}
                           </span>
                           <span>{stack.name}</span>
-                          <span className={styles.techCategory}>({stack.category})</span>
+                          <span className={styles.techCategory}>
+                            ({stack.category})
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -792,22 +985,39 @@ const Projects = () => {
       {/* Edit Modal */}
       {isEditing && editingProject && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+          <div className={`${styles.modal} ${styles.wideModal}`}>
             <h2>Edit Project</h2>
             <div className={styles.form}>
-              <div className={styles.formGroup}>
-                <label>Project Title:</label>
-                <input
-                  type="text"
-                  value={editingProject.title}
-                  onChange={(e) =>
-                    setEditingProject((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
-                  placeholder="Enter project title"
-                />
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Project Title:</label>
+                  <input
+                    type="text"
+                    value={editingProject.title}
+                    onChange={(e) =>
+                      setEditingProject((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter project title"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Status:</label>
+                  <FlexibleSelect
+                    options={statusOptions}
+                    value={newProject.status}
+                    onChange={(e) =>
+                      setNewProject((prev) => ({
+                        ...prev,
+                        status: e.target.value,
+                      }))
+                    }
+                    placeholder="Select Status"
+                  />
+                </div>
               </div>
 
               <div className={styles.formGroup}>
@@ -840,53 +1050,103 @@ const Projects = () => {
                 />
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Background Image:</label>
-                <div className={styles.imageUploadSection}>
-                  {(editingProject.backgroundImage || imagePreview) && (
-                    <div
-                      className={styles.imagePreview}
-                      style={{
-                        backgroundImage: `url(${imagePreview || editingProject.backgroundImage})`,
-                      }}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Background Image (Card Display):</label>
+                  <div className={styles.imageUploadSection}>
+                    {(editingProject.backgroundImage ||
+                      backgroundImagePreview) && (
+                      <div
+                        className={styles.imagePreview}
+                        style={{
+                          backgroundImage: `url(${
+                            backgroundImagePreview ||
+                            editingProject.backgroundImage
+                          })`,
+                        }}
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleBackgroundImageChange(e, false)}
+                      className={styles.fileInput}
+                      id="edit-background-image-upload"
+                      ref={backgroundFileInputRef}
                     />
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e, false)}
-                    className={styles.fileInput}
-                    id="edit-image-upload"
-                    ref={fileInputRef}
-                  />
-                  <label
-                    htmlFor="edit-image-upload"
-                    className={styles.uploadButton}
-                  >
-                    <FiImage />{" "}
-                    {editingProject.backgroundImage ? "Change Image" : "Upload Image"}
-                  </label>
+                    <label
+                      htmlFor="edit-background-image-upload"
+                      className={styles.uploadButton}
+                    >
+                      <FiImage />{" "}
+                      {editingProject.backgroundImage
+                        ? "Change Background Image"
+                        : "Upload Background Image"}
+                    </label>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Project Images (Up to 3):</label>
+                  <div className={styles.imageUploadSection}>
+                    <div className={styles.projectImagesPreviews}>
+                      {projectImagesPreviews.map((preview, index) => (
+                        <div key={index} className={styles.projectImagePreview}>
+                          <img src={preview} alt={`Preview ${index + 1}`} />
+                          <button
+                            type="button"
+                            onClick={() => removeProjectImage(index, false)}
+                            className={styles.removeImageBtn}
+                          >
+                            <FiX />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleProjectImagesChange(e, false)}
+                      className={styles.fileInput}
+                      id="edit-project-images-upload"
+                      ref={projectImagesFileInputRef}
+                    />
+                    <label
+                      htmlFor="edit-project-images-upload"
+                      className={styles.uploadButton}
+                    >
+                      <FiImage /> Upload Project Images
+                    </label>
+                    <div className={styles.uploadHint}>
+                      {projectImagesPreviews.length}/3 images selected
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Status:</label>
-                  <select
-                    value={editingProject.status}
-                    onChange={(e) =>
-                      setEditingProject((prev) => ({
-                        ...prev,
-                        status: e.target.value,
-                      }))
-                    }
-                  >
-                    {statusOptions.map(option => (
-                      <option key={option.value} value={option.value}>
+                  <label>Categories:</label>
+                  <div className={styles.checkboxGroup}>
+                    {categoryOptions.map((option) => (
+                      <label
+                        key={option.value}
+                        className={styles.checkboxLabel}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={editingProject.category.includes(
+                            option.value
+                          )}
+                          onChange={() =>
+                            handleCategoryChange(option.value, false)
+                          }
+                        />
                         {option.label}
-                      </option>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -905,34 +1165,36 @@ const Projects = () => {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Timeline:</label>
-                <input
-                  type="text"
-                  value={editingProject.timeline}
-                  onChange={(e) =>
-                    setEditingProject((prev) => ({
-                      ...prev,
-                      timeline: e.target.value,
-                    }))
-                  }
-                  placeholder="e.g., 3 months"
-                />
-              </div>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Timeline:</label>
+                  <input
+                    type="text"
+                    value={editingProject.timeline}
+                    onChange={(e) =>
+                      setEditingProject((prev) => ({
+                        ...prev,
+                        timeline: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g., 3 months"
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label>Live Link:</label>
-                <input
-                  type="text"
-                  value={editingProject.liveLink}
-                  onChange={(e) =>
-                    setEditingProject((prev) => ({
-                      ...prev,
-                      liveLink: e.target.value,
-                    }))
-                  }
-                  placeholder="https://example.com"
-                />
+                <div className={styles.formGroup}>
+                  <label>Live Link:</label>
+                  <input
+                    type="text"
+                    value={editingProject.liveLink}
+                    onChange={(e) =>
+                      setEditingProject((prev) => ({
+                        ...prev,
+                        liveLink: e.target.value,
+                      }))
+                    }
+                    placeholder="https://example.com"
+                  />
+                </div>
               </div>
 
               <div className={styles.formGroup}>
@@ -950,37 +1212,6 @@ const Projects = () => {
                 />
               </div>
 
-              {/* Categories Management */}
-              <div className={styles.arrayManagement}>
-                <h4>Categories</h4>
-                {editingProject.category.map((item, index) => (
-                  <div key={index} className={styles.arrayItem}>
-                    <span>{item}</span>
-                    <button
-                      onClick={() => handleRemoveFromArray('category', index, false)}
-                      className={styles.removeArrayBtn}
-                    >
-                      <FiX />
-                    </button>
-                  </div>
-                ))}
-                <div className={styles.addArrayItem}>
-                  <input
-                    type="text"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="Enter category"
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddToArray('category', newCategory, false)}
-                  />
-                  <button
-                    onClick={() => handleAddToArray('category', newCategory, false)}
-                    className={styles.addArrayBtn}
-                  >
-                    <FiPlus />
-                  </button>
-                </div>
-              </div>
-
               {/* Features Management */}
               <div className={styles.arrayManagement}>
                 <h4>Features</h4>
@@ -988,7 +1219,9 @@ const Projects = () => {
                   <div key={index} className={styles.arrayItem}>
                     <span>{item}</span>
                     <button
-                      onClick={() => handleRemoveFromArray('features', index, false)}
+                      onClick={() =>
+                        handleRemoveFromArray("features", index, false)
+                      }
                       className={styles.removeArrayBtn}
                     >
                       <FiX />
@@ -1001,10 +1234,15 @@ const Projects = () => {
                     value={newFeature}
                     onChange={(e) => setNewFeature(e.target.value)}
                     placeholder="Enter feature"
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddToArray('features', newFeature, false)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("features", newFeature, false)
+                    }
                   />
                   <button
-                    onClick={() => handleAddToArray('features', newFeature, false)}
+                    onClick={() =>
+                      handleAddToArray("features", newFeature, false)
+                    }
                     className={styles.addArrayBtn}
                   >
                     <FiPlus />
@@ -1012,7 +1250,81 @@ const Projects = () => {
                 </div>
               </div>
 
-              {/* Similar sections for Challenges and Solutions */}
+              {/* Challenges Management */}
+              <div className={styles.arrayManagement}>
+                <h4>Challenges</h4>
+                {editingProject.challenges.map((item, index) => (
+                  <div key={index} className={styles.arrayItem}>
+                    <span>{item}</span>
+                    <button
+                      onClick={() =>
+                        handleRemoveFromArray("challenges", index, false)
+                      }
+                      className={styles.removeArrayBtn}
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.addArrayItem}>
+                  <input
+                    type="text"
+                    value={newChallenge}
+                    onChange={(e) => setNewChallenge(e.target.value)}
+                    placeholder="Enter challenge"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("challenges", newChallenge, false)
+                    }
+                  />
+                  <button
+                    onClick={() =>
+                      handleAddToArray("challenges", newChallenge, false)
+                    }
+                    className={styles.addArrayBtn}
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+              </div>
+
+              {/* Solutions Management */}
+              <div className={styles.arrayManagement}>
+                <h4>Solutions</h4>
+                {editingProject.solutions.map((item, index) => (
+                  <div key={index} className={styles.arrayItem}>
+                    <span>{item}</span>
+                    <button
+                      onClick={() =>
+                        handleRemoveFromArray("solutions", index, false)
+                      }
+                      className={styles.removeArrayBtn}
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.addArrayItem}>
+                  <input
+                    type="text"
+                    value={newSolution}
+                    onChange={(e) => setNewSolution(e.target.value)}
+                    placeholder="Enter solution"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("solutions", newSolution, false)
+                    }
+                  />
+                  <button
+                    onClick={() =>
+                      handleAddToArray("solutions", newSolution, false)
+                    }
+                    className={styles.addArrayBtn}
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+              </div>
 
               {/* Tech Stack Management */}
               <div className={styles.stacksManagement}>
@@ -1050,15 +1362,15 @@ const Projects = () => {
               </div>
 
               <div className={styles.modalActions}>
-                <button 
-                  onClick={handleSaveEdit} 
+                <button
+                  onClick={handleSaveEdit}
                   className={styles.saveBtn}
                   disabled={loading}
                 >
                   <FiSave /> {loading ? "Saving..." : "Save Changes"}
                 </button>
-                <button 
-                  onClick={handleCancelEdit} 
+                <button
+                  onClick={handleCancelEdit}
                   className={styles.cancelBtn}
                   disabled={loading}
                 >
@@ -1073,19 +1385,39 @@ const Projects = () => {
       {/* Add New Project Modal */}
       {isAdding && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+          <div className={`${styles.modal} ${styles.wideModal}`}>
             <h2>Add New Project</h2>
             <div className={styles.form}>
-              <div className={styles.formGroup}>
-                <label>Project Title:</label>
-                <input
-                  type="text"
-                  value={newProject.title}
-                  onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, title: e.target.value }))
-                  }
-                  placeholder="Enter project title"
-                />
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Project Title:</label>
+                  <input
+                    type="text"
+                    value={newProject.title}
+                    onChange={(e) =>
+                      setNewProject((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter project title"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Status:</label>
+                  <FlexibleSelect
+                    options={statusOptions}
+                    value={newProject.status}
+                    onChange={(e) =>
+                      setNewProject((prev) => ({
+                        ...prev,
+                        status: e.target.value,
+                      }))
+                    }
+                    placeholder="Select Status"
+                  />
+                </div>
               </div>
 
               <div className={styles.formGroup}>
@@ -1093,7 +1425,10 @@ const Projects = () => {
                 <textarea
                   value={newProject.description}
                   onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, description: e.target.value }))
+                    setNewProject((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
                   }
                   rows="2"
                   placeholder="Enter short description"
@@ -1105,56 +1440,104 @@ const Projects = () => {
                 <textarea
                   value={newProject.detailedDescription}
                   onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, detailedDescription: e.target.value }))
+                    setNewProject((prev) => ({
+                      ...prev,
+                      detailedDescription: e.target.value,
+                    }))
                   }
                   rows="4"
                   placeholder="Enter detailed description"
                 />
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Background Image:</label>
-                <div className={styles.imageUploadSection}>
-                  {imagePreview && (
-                    <div
-                      className={styles.imagePreview}
-                      style={{
-                        backgroundImage: `url(${imagePreview})`,
-                      }}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Background Image (Card Display):</label>
+                  <div className={styles.imageUploadSection}>
+                    {backgroundImagePreview && (
+                      <div
+                        className={styles.imagePreview}
+                        style={{
+                          backgroundImage: `url(${backgroundImagePreview})`,
+                        }}
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleBackgroundImageChange(e, true)}
+                      className={styles.fileInput}
+                      id="new-background-image-upload"
+                      ref={backgroundFileInputRef}
                     />
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e, true)}
-                    className={styles.fileInput}
-                    id="new-image-upload"
-                    ref={fileInputRef}
-                  />
-                  <label
-                    htmlFor="new-image-upload"
-                    className={styles.uploadButton}
-                  >
-                    <FiImage /> Upload Image
-                  </label>
+                    <label
+                      htmlFor="new-background-image-upload"
+                      className={styles.uploadButton}
+                    >
+                      <FiImage /> Upload Background Image
+                    </label>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Project Images (Up to 3):</label>
+                  <div className={styles.imageUploadSection}>
+                    <div className={styles.projectImagesPreviews}>
+                      {projectImagesPreviews.map((preview, index) => (
+                        <div key={index} className={styles.projectImagePreview}>
+                          <img src={preview} alt={`Preview ${index + 1}`} />
+                          <button
+                            type="button"
+                            onClick={() => removeProjectImage(index, true)}
+                            className={styles.removeImageBtn}
+                          >
+                            <FiX />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleProjectImagesChange(e, true)}
+                      className={styles.fileInput}
+                      id="new-project-images-upload"
+                      ref={projectImagesFileInputRef}
+                    />
+                    <label
+                      htmlFor="new-project-images-upload"
+                      className={styles.uploadButton}
+                    >
+                      <FiImage /> Upload Project Images
+                    </label>
+                    <div className={styles.uploadHint}>
+                      {projectImagesPreviews.length}/3 images selected
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Status:</label>
-                  <select
-                    value={newProject.status}
-                    onChange={(e) =>
-                      setNewProject((prev) => ({ ...prev, status: e.target.value }))
-                    }
-                  >
-                    {statusOptions.map(option => (
-                      <option key={option.value} value={option.value}>
+                  <label>Categories:</label>
+                  <div className={styles.checkboxGroup}>
+                    {categoryOptions.map((option) => (
+                      <label
+                        key={option.value}
+                        className={styles.checkboxLabel}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={newProject.category.includes(option.value)}
+                          onChange={() =>
+                            handleCategoryChange(option.value, true)
+                          }
+                        />
                         {option.label}
-                      </option>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -1163,35 +1546,46 @@ const Projects = () => {
                     type="number"
                     value={newProject.teamSize}
                     onChange={(e) =>
-                      setNewProject((prev) => ({ ...prev, teamSize: parseInt(e.target.value) || 1 }))
+                      setNewProject((prev) => ({
+                        ...prev,
+                        teamSize: parseInt(e.target.value) || 1,
+                      }))
                     }
                     min="1"
                   />
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Timeline:</label>
-                <input
-                  type="text"
-                  value={newProject.timeline}
-                  onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, timeline: e.target.value }))
-                  }
-                  placeholder="e.g., 3 months"
-                />
-              </div>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Timeline:</label>
+                  <input
+                    type="text"
+                    value={newProject.timeline}
+                    onChange={(e) =>
+                      setNewProject((prev) => ({
+                        ...prev,
+                        timeline: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g., 3 months"
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label>Live Link:</label>
-                <input
-                  type="text"
-                  value={newProject.liveLink}
-                  onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, liveLink: e.target.value }))
-                  }
-                  placeholder="https://example.com"
-                />
+                <div className={styles.formGroup}>
+                  <label>Live Link:</label>
+                  <input
+                    type="text"
+                    value={newProject.liveLink}
+                    onChange={(e) =>
+                      setNewProject((prev) => ({
+                        ...prev,
+                        liveLink: e.target.value,
+                      }))
+                    }
+                    placeholder="https://example.com"
+                  />
+                </div>
               </div>
 
               <div className={styles.formGroup}>
@@ -1200,41 +1594,13 @@ const Projects = () => {
                   type="text"
                   value={newProject.githubLink}
                   onChange={(e) =>
-                    setNewProject((prev) => ({ ...prev, githubLink: e.target.value }))
+                    setNewProject((prev) => ({
+                      ...prev,
+                      githubLink: e.target.value,
+                    }))
                   }
                   placeholder="https://github.com/user/repo"
                 />
-              </div>
-
-              {/* Categories Management */}
-              <div className={styles.arrayManagement}>
-                <h4>Categories</h4>
-                {newProject.category.map((item, index) => (
-                  <div key={index} className={styles.arrayItem}>
-                    <span>{item}</span>
-                    <button
-                      onClick={() => handleRemoveFromArray('category', index, true)}
-                      className={styles.removeArrayBtn}
-                    >
-                      <FiX />
-                    </button>
-                  </div>
-                ))}
-                <div className={styles.addArrayItem}>
-                  <input
-                    type="text"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="Enter category"
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddToArray('category', newCategory, true)}
-                  />
-                  <button
-                    onClick={() => handleAddToArray('category', newCategory, true)}
-                    className={styles.addArrayBtn}
-                  >
-                    <FiPlus />
-                  </button>
-                </div>
               </div>
 
               {/* Features Management */}
@@ -1244,7 +1610,9 @@ const Projects = () => {
                   <div key={index} className={styles.arrayItem}>
                     <span>{item}</span>
                     <button
-                      onClick={() => handleRemoveFromArray('features', index, true)}
+                      onClick={() =>
+                        handleRemoveFromArray("features", index, true)
+                      }
                       className={styles.removeArrayBtn}
                     >
                       <FiX />
@@ -1257,10 +1625,91 @@ const Projects = () => {
                     value={newFeature}
                     onChange={(e) => setNewFeature(e.target.value)}
                     placeholder="Enter feature"
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddToArray('features', newFeature, true)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("features", newFeature, true)
+                    }
                   />
                   <button
-                    onClick={() => handleAddToArray('features', newFeature, true)}
+                    onClick={() =>
+                      handleAddToArray("features", newFeature, true)
+                    }
+                    className={styles.addArrayBtn}
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+              </div>
+
+              {/* Challenges Management */}
+              <div className={styles.arrayManagement}>
+                <h4>Challenges</h4>
+                {newProject.challenges.map((item, index) => (
+                  <div key={index} className={styles.arrayItem}>
+                    <span>{item}</span>
+                    <button
+                      onClick={() =>
+                        handleRemoveFromArray("challenges", index, true)
+                      }
+                      className={styles.removeArrayBtn}
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.addArrayItem}>
+                  <input
+                    type="text"
+                    value={newChallenge}
+                    onChange={(e) => setNewChallenge(e.target.value)}
+                    placeholder="Enter challenge"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("challenges", newChallenge, true)
+                    }
+                  />
+                  <button
+                    onClick={() =>
+                      handleAddToArray("challenges", newChallenge, true)
+                    }
+                    className={styles.addArrayBtn}
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+              </div>
+
+              {/* Solutions Management */}
+              <div className={styles.arrayManagement}>
+                <h4>Solutions</h4>
+                {newProject.solutions.map((item, index) => (
+                  <div key={index} className={styles.arrayItem}>
+                    <span>{item}</span>
+                    <button
+                      onClick={() =>
+                        handleRemoveFromArray("solutions", index, true)
+                      }
+                      className={styles.removeArrayBtn}
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.addArrayItem}>
+                  <input
+                    type="text"
+                    value={newSolution}
+                    onChange={(e) => setNewSolution(e.target.value)}
+                    placeholder="Enter solution"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" &&
+                      handleAddToArray("solutions", newSolution, true)
+                    }
+                  />
+                  <button
+                    onClick={() =>
+                      handleAddToArray("solutions", newSolution, true)
+                    }
                     className={styles.addArrayBtn}
                   >
                     <FiPlus />
@@ -1296,7 +1745,7 @@ const Projects = () => {
                   />
                   <button
                     onClick={() => handleAddStack(true)}
-                    className={styles.addStackBtn}
+                    className={styles.addArrayBtn}
                   >
                     <FiPlus />
                   </button>
@@ -1304,15 +1753,15 @@ const Projects = () => {
               </div>
 
               <div className={styles.modalActions}>
-                <button 
-                  onClick={handleSaveNew} 
+                <button
+                  onClick={handleSaveNew}
                   className={styles.saveBtn}
                   disabled={loading}
                 >
                   <FiSave /> {loading ? "Adding..." : "Add Project"}
                 </button>
-                <button 
-                  onClick={handleCancelAdd} 
+                <button
+                  onClick={handleCancelAdd}
                   className={styles.cancelBtn}
                   disabled={loading}
                 >
