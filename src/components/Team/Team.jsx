@@ -7,54 +7,113 @@ import { FaXTwitter } from "react-icons/fa6";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import Image from "next/image";
 
-const Teams = [
-  {
-    name: "George-Pepple Treasure",
-    image: "/about.jpg", // Placeholder image path
-    role: "Co-Founder & Full-Stack Developer",
-    desc: "A passionate developer with a knack for creating seamless user experiences and robust, scalable backend solutions.",
-    link: "#", 
-  },
-  {
-    name: "Adekunle Adebayo",
-    image: "/Hero.jpg",
-    role: "Lead UI/UX Designer",
-    desc: "Specializes in crafting intuitive and visually stunning interfaces that solve complex user problems and elevate brands.",
-    link: "#",
-  },
-  {
-    name: "Chiamaka Okoro",
-    image: "/about.jpg",
-    role: "Backend Engineer",
-    desc: "The architect of our server-side logic, ensuring our applications are secure, performant, and built to last.",
-    link: "#",
-  },
-  {
-    name: "Emeka Nwosu",
-    image: "/Hero.jpg",
-    role: "Frontend Developer",
-    desc: "Brings designs to life with clean, efficient code and a keen eye for creating responsive, interactive user experiences.",
-    link: "#",
-  },
-  {
-    name: "Fatima Bello",
-    image: "/about.jpg",
-    role: "Project Manager",
-    desc: "The organizational powerhouse who ensures projects are delivered on time, on budget, and to the highest standard.",
-    link: "#",
-  },
-];
-
 export const Team = () => {
+  const [teams, setTeams] = useState([]);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch teams from API
   useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/teams');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch team members');
+        }
+        
+        const data = await response.json();
+        setTeams(data);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching teams:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
+  // Auto-slide only when we have teams and no errors
+  useEffect(() => {
+    if (teams.length === 0) return;
+
     const sliderInterval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % Teams.length);
+      setIndex((prev) => (prev + 1) % teams.length);
     }, 3000);
 
     return () => clearInterval(sliderInterval);
-  }, [Teams.length]);
+  }, [teams.length]);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Meet The Team</h1>
+          <span className={styles.subtitle}>
+            Together we work to give you the best through GammaDevs
+          </span>
+        </div>
+        <div className={styles.loadingState}>
+          <div className={styles.spinner}></div>
+          <p>Loading team members...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Meet The Team</h1>
+          <span className={styles.subtitle}>
+            Together we work to give you the best through GammaDevs
+          </span>
+        </div>
+        <div className={styles.errorState}>
+          <div className={styles.errorIcon}>⚠️</div>
+          <h3>Something went wrong</h3>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className={styles.retryButton}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (teams.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Meet The Team</h1>
+          <span className={styles.subtitle}>
+            Together we work to give you the best through GammaDevs
+          </span>
+        </div>
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>👥</div>
+          <h3>No Team Members Yet</h3>
+          <p>We're assembling our amazing team. Check back soon to meet the people behind GammaDevs!</p>
+          <div className={styles.emptyActions}>
+            <button 
+              onClick={() => window.location.reload()} 
+              className={styles.refreshLink}
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -65,19 +124,20 @@ export const Team = () => {
         </span>
       </div>
       <div className={styles.sliderContainer}>
-        {Teams.map((team, i) => (
+        {teams.map((team, i) => (
           <div
-            key={team.name}
+            key={team.id || team.name}
             className={`${index === i ? styles.body : styles.inactive}`}
           >
             <div className={styles.pic}>
               <div className={styles.gradientWrapper}>
                 <div className={styles.imgcontainer}>
                   <Image
-                    src={team.image}
+                    src={team.image || "/default-avatar.jpg"}
                     className={styles.img}
                     alt={team.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
               </div>
@@ -90,19 +150,27 @@ export const Team = () => {
                 </div>
                 <span className={styles.desc}>{team.desc}</span>
                 <div className={styles.socials}>
-                  <span className={styles.profile}>
-                    View My Portfolio and Projects <IoExitOutline />
-                  </span>
+                  {team.link && (
+                    <a href={team.link} className={styles.profile} target="_blank" rel="noopener noreferrer">
+                      View My Portfolio and Projects <IoExitOutline />
+                    </a>
+                  )}
                   <div className={styles.social}>
-                    <div className={styles.icon}>
-                      <FaXTwitter />
-                    </div>
-                    <div className={styles.icon}>
-                      <FaLinkedin />
-                    </div>
-                    <div className={styles.icon}>
-                      <FaGithub />
-                    </div>
+                    {team.twitter && (
+                      <a href={team.twitter} className={styles.icon} target="_blank" rel="noopener noreferrer">
+                        <FaXTwitter />
+                      </a>
+                    )}
+                    {team.linkedin && (
+                      <a href={team.linkedin} className={styles.icon} target="_blank" rel="noopener noreferrer">
+                        <FaLinkedin />
+                      </a>
+                    )}
+                    {team.github && (
+                      <a href={team.github} className={styles.icon} target="_blank" rel="noopener noreferrer">
+                        <FaGithub />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -112,19 +180,20 @@ export const Team = () => {
       </div>
       <div className={styles.footer}>
         <div className={styles.buttons}>
-          {Teams.slice(0, 5).map((team, i) => (
+          {teams.slice(0, 5).map((team, i) => (
             <button
-              key={team.name}
+              key={team.id || team.name}
               className={
                 index === i ? styles.sliderImg : styles.sliderImginactive
               }
-              onClick={()=>setIndex(i)}
+              onClick={() => setIndex(i)}
             >
               <Image
-                src={team.image}
+                src={team.image || "/default-avatar.jpg"}
                 className={styles.img}
                 alt={team.name}
                 fill
+                sizes="48px"
               />
             </button>
           ))}

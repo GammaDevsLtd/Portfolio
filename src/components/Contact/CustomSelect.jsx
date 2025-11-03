@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import styles from './Contact.module.css'; // We'll use the same CSS module
-import { FaChevronDown } from 'react-icons/fa'; // Import an icon
+import styles from './Contact.module.css';
+import { FaChevronDown } from 'react-icons/fa';
 
-const CustomSelect = ({ options, value, onChange, name, placeholder }) => {
+const CustomSelect = ({ options, value, onChange, name, placeholder, disabled = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
 
@@ -13,17 +13,13 @@ const CustomSelect = ({ options, value, onChange, name, placeholder }) => {
     return selectedOption ? selectedOption.label : placeholder;
   };
 
-  // This handles selecting an option
+  // This handles selecting an option - FIXED VERSION
   const handleSelect = (option) => {
-    // We create a "synthetic event" to mimic the original <select>
-    // This makes it 100% compatible with your existing handleChange function!
-    const syntheticEvent = {
-      target: {
-        name: name,
-        value: option.value,
-      },
-    };
-    onChange(syntheticEvent); // Call the original handleChange
+    // Pass just the string value directly to the parent component
+    // This matches what the API expects
+    if (typeof onChange === 'function') {
+      onChange(option.value);
+    }
     setIsOpen(false); // Close the dropdown
   };
 
@@ -43,21 +39,22 @@ const CustomSelect = ({ options, value, onChange, name, placeholder }) => {
   return (
     <div className={styles.customSelectWrapper} ref={selectRef}>
       <div
-        className={styles.selectButton}
-        onClick={() => setIsOpen(!isOpen)}
+        className={`${styles.selectButton} ${disabled ? styles.disabled : ''}`}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
         role="button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        tabIndex={disabled ? -1 : 0}
       >
         <span className={value ? styles.selectedValue : styles.selectPlaceholder}>
           {getSelectedLabel()}
         </span>
         <FaChevronDown
-          className={`${styles.selectChevron} ${isOpen ? styles.open : ''}`}
+          className={`${styles.selectChevron} ${isOpen ? styles.open : ''} ${disabled ? styles.disabled : ''}`}
         />
       </div>
 
-      {isOpen && (
+      {isOpen && !disabled && (
         <ul className={styles.optionsMenu} role="listbox">
           {options.map((option) => (
             <li

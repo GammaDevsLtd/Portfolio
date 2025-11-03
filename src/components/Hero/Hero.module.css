@@ -52,7 +52,10 @@
   /* z-index: 1; */
 }
 
-
+.launch:hover{
+    background: var(--dark-blue);
+    transition: background 0.3s ease;
+}
 
 .book{
     background: var(--light-blue);

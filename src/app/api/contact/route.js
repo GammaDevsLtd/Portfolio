@@ -7,13 +7,22 @@ export async function POST(request) {
     await connectMongoDB();
     
     const body = await request.json();
-    const { name, email, subject, message } = body;
+    const { 
+      name, 
+      email, 
+      phone, 
+      company, 
+      projectType, 
+      budget, 
+      timeline, 
+      description 
+    } = body;
 
     // Validate required fields
-    if (!name || !email || !subject || !message) {
+    if (!name || !email || !description) {
       return new Response(
         JSON.stringify({ 
-          error: 'Name, email, subject, and message are required' 
+          error: 'Name, email, and project description are required' 
         }),
         { 
           status: 400, 
@@ -23,20 +32,29 @@ export async function POST(request) {
     }
 
     // Generate unique ID for the contact request
-    const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const requestId = `contact-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Generate subject from project type and company
+    const subject = `Project Inquiry: ${projectType || 'General'} from ${company || name}`;
 
     const newContactRequest = new ClientRequestModel({
       id: requestId,
       type: "contact_form",
       name,
       email,
+      phone: phone || '',
+      company: company || '',
+      projectType: projectType || '',
+      budget: budget || '',
+      timeline: timeline || '',
       subject,
-      message,
+      message: description, // Using description as the message
       submittedAt: new Date(),
       status: "new",
       replies: [],
       formId: null, // Not applicable for contact forms
-      formData: null // Not applicable for contact forms
+      formData: null, // Not applicable for contact forms
+      attachments: [] // Can be extended for file uploads later
     });
 
     const savedRequest = await newContactRequest.save();

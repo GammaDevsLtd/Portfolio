@@ -19,7 +19,7 @@ const Footer = () => {
           <p className="mt-4">
             GammaDevs Technologies Limited.
             <br />
-            Providing reliable tech since 1992
+            Bringing the Best of Tech to You
           </p>
         </aside>
         <nav>

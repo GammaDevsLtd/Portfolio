@@ -36,7 +36,6 @@ const formSchema = new Schema(
   { timestamps: true }
 );
 
-// UPDATED: Client request schema (for both contact forms and form submissions)
 const clientRequestSchema = new Schema(
   {
     id: { type: String, required: true, unique: true },
@@ -45,16 +44,30 @@ const clientRequestSchema = new Schema(
       enum: ["contact_form", "form_submission"],
       required: true,
     },
-    formId: { type: String }, // NEW: Reference to the form template
+    formId: { type: String }, // For form submissions
+    
+    // Contact form fields
     name: { type: String, required: true },
     email: { type: String, required: true },
-    subject: { type: String, required: true },
-    message: { type: String }, // For contact forms
+    phone: { type: String },
+    company: { type: String },
+    projectType: { type: String },
+    budget: { type: String },
+    timeline: { type: String },
+    subject: { type: String, required: true }, // Auto-generated from project type
+    message: { type: String, required: true }, // Project description
     
-    // UPDATED: For form submissions - better structure
+    // For file attachments
+    attachments: [{
+      filename: String,
+      url: String,
+      size: Number,
+      uploadedAt: { type: Date, default: Date.now }
+    }],
+    
+    // For form submissions - flexible form structure
     formData: {
       formTitle: { type: String },
-      // Changed from array to Map to match your Forms component structure
       submissionData: {
         type: Map,
         of: String
