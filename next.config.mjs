@@ -2,14 +2,6 @@
 const nextConfig = {
   reactCompiler: true,
   images: {
-    domains: [
-      'res.cloudinary.com',
-      'images.unsplash.com',
-      'plus.unsplash.com',
-      'lh3.googleusercontent.com',
-      'avatars.githubusercontent.com',
-      // Add other domains you use for images
-    ],
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
@@ -17,6 +9,27 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '**',
+      },
+      // Add other remote patterns for domains you use for images
     ],
   },
 };
