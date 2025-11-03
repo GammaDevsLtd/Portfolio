@@ -1,9 +1,15 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "./ContactPage.module.css";
 import CustomSelect from "@/components/Contact/CustomSelect";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane, FaCheckCircle, FaExclamationTriangle, FaTimes } from "react-icons/fa";
+import axios from "axios";
+
+// Cloudinary configuration
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_FOLDER = process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
 
 const projectTypeOptions = [
   { value: "website", label: "Website Development" },
@@ -33,16 +39,48 @@ const ContactPage = () => {
     budget: "",
     timeline: "",
     description: "",
-    files: null,
   });
+  
+  const [files, setFiles] = useState([]);
+  const [filePreviews, setFilePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Cloudinary upload function
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", CLOUDINARY_FOLDER);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return {
+        url: response.data.secure_url,
+        publicId: response.data.public_id,
+        originalName: file.name,
+      };
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      throw new Error(`Failed to upload file: ${file.name}`);
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files : value,
+      [name]: value,
     }));
   };
 
@@ -51,6 +89,52 @@ const ContactPage = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    
+    // Validate file types and sizes
+    const validFiles = selectedFiles.filter(file => {
+      const validTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+      
+      if (!validTypes.includes(fileExtension)) {
+        setSubmitStatus({
+          type: "error",
+          message: `Invalid file type: ${file.name}. Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG.`
+        });
+        return false;
+      }
+      
+      if (file.size > 10 * 1024 * 1024) {
+        setSubmitStatus({
+          type: "error",
+          message: `File too large: ${file.name}. Maximum size is 10MB.`
+        });
+        return false;
+      }
+      
+      return true;
+    });
+
+    // Create previews for images
+    const imagePreviews = validFiles
+      .filter(file => file.type.startsWith('image/'))
+      .map(file => URL.createObjectURL(file));
+
+    setFiles(prev => [...prev, ...validFiles]);
+    setFilePreviews(prev => [...prev, ...imagePreviews]);
+  };
+
+  const removeFile = (index) => {
+    // Revoke object URL for image previews to avoid memory leaks
+    if (filePreviews[index]) {
+      URL.revokeObjectURL(filePreviews[index]);
+    }
+    
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFilePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -69,12 +153,32 @@ const ContactPage = () => {
     } 
 
     try {
+      // Upload files to Cloudinary first
+      let uploadedFiles = [];
+      if (files.length > 0) {
+        setSubmitStatus({
+          type: "info",
+          message: `Uploading ${files.length} file(s)...`
+        });
+
+        for (let file of files) {
+          const uploadResult = await uploadToCloudinary(file);
+          uploadedFiles.push(uploadResult);
+        }
+      }
+
+      // Submit form data with file URLs
+      const submissionData = {
+        ...formData,
+        files: uploadedFiles
+      };
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -99,8 +203,12 @@ const ContactPage = () => {
         budget: "",
         timeline: "",
         description: "",
-        files: null,
       });
+      setFiles([]);
+      setFilePreviews([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       setSubmitStatus({
@@ -115,6 +223,13 @@ const ContactPage = () => {
   const clearStatus = () => {
     setSubmitStatus(null);
   };
+
+  // Clean up object URLs when component unmounts
+  React.useEffect(() => {
+    return () => {
+      filePreviews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, [filePreviews]);
 
   return (
     <div className={styles.pageContainer}>
@@ -269,17 +384,54 @@ const ContactPage = () => {
                       type="file"
                       id="files"
                       name="files"
-                      onChange={handleChange}
+                      onChange={handleFileChange}
                       multiple
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                       disabled={loading}
+                      ref={fileInputRef}
                     />
                     <div className={styles.fileInputLabel}>
                       <FaPaperPlane />
                       <span>Choose files or drag & drop here</span>
                     </div>
                   </div>
-                  <small>Supported formats: PDF, DOC, JPG, PNG (Max 10MB each)</small>
+                  
+                  {/* File previews */}
+                  {files.length > 0 && (
+                    <div className={styles.filePreviews}>
+                      {files.map((file, index) => (
+                        <div key={index} className={styles.filePreview}>
+                          {filePreviews[index] ? (
+                            <div className={styles.imagePreview}>
+                              <img src={filePreviews[index]} alt={file.name} />
+                              <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className={styles.removeFileBtn}
+                                disabled={loading}
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className={styles.fileInfo}>
+                              <span>{file.name}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className={styles.removeFileBtn}
+                                disabled={loading}
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <small>Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max 10MB each)</small>
                 </div>
 
                 <button
@@ -290,7 +442,7 @@ const ContactPage = () => {
                   {loading ? (
                     <>
                       <div className={styles.loadingSpinner}></div>
-                      Sending Request...
+                      {submitStatus?.type === "info" ? "Uploading Files..." : "Sending Request..."}
                     </>
                   ) : (
                     <>
@@ -299,10 +451,13 @@ const ContactPage = () => {
                     </>
                   )}
                 </button>
-                                {submitStatus && (
+                
+                {submitStatus && (
                   <div className={`${styles.statusMessage} ${styles[submitStatus.type]}`}>
                     <div className={styles.statusIcon}>
-                      {submitStatus.type === "success" ? <FaCheckCircle /> : <FaExclamationTriangle />}
+                      {submitStatus.type === "success" ? <FaCheckCircle /> : 
+                       submitStatus.type === "info" ? <FaPaperPlane /> : 
+                       <FaExclamationTriangle />}
                     </div>
                     <div className={styles.statusContent}>
                       <span>{submitStatus.message}</span>

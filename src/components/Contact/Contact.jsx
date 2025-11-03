@@ -1,8 +1,15 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "./Contact.module.css";
 import CustomSelect from "./CustomSelect";
+import { FaPaperPlane, FaCheckCircle, FaExclamationTriangle, FaTimes } from "react-icons/fa";
+import axios from "axios";
+
+// Cloudinary configuration
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_FOLDER = process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
 
 const projectTypeOptions = [
   { value: "website", label: "Website Development" },
@@ -32,16 +39,48 @@ const Contact = () => {
     budget: "",
     timeline: "",
     description: "",
-    files: null,
   });
+  
+  const [files, setFiles] = useState([]);
+  const [filePreviews, setFilePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Cloudinary upload function
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", CLOUDINARY_FOLDER);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return {
+        url: response.data.secure_url,
+        publicId: response.data.public_id,
+        originalName: file.name,
+      };
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      throw new Error(`Failed to upload file: ${file.name}`);
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files : value,
+      [name]: value,
     }));
   };
 
@@ -52,12 +91,59 @@ const Contact = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    
+    // Validate file types and sizes
+    const validFiles = selectedFiles.filter(file => {
+      const validTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+      
+      if (!validTypes.includes(fileExtension)) {
+        setSubmitStatus({
+          type: "error",
+          message: `Invalid file type: ${file.name}. Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG.`
+        });
+        return false;
+      }
+      
+      if (file.size > 10 * 1024 * 1024) {
+        setSubmitStatus({
+          type: "error",
+          message: `File too large: ${file.name}. Maximum size is 10MB.`
+        });
+        return false;
+      }
+      
+      return true;
+    });
+
+    // Create previews for images
+    const imagePreviews = validFiles
+      .filter(file => file.type.startsWith('image/'))
+      .map(file => URL.createObjectURL(file));
+
+    setFiles(prev => [...prev, ...validFiles]);
+    setFilePreviews(prev => [...prev, ...imagePreviews]);
+  };
+
+  const removeFile = (index) => {
+    // Revoke object URL for image previews to avoid memory leaks
+    if (filePreviews[index]) {
+      URL.revokeObjectURL(filePreviews[index]);
+    }
+    
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFilePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setSubmitStatus(null);
 
-    if(!formData.name || !formData.email || !formData.description || !formData.projectType || !formData.timeline || formData.budget || !formData.timeline || formData.company || !formData.phone) {
+    // Fixed validation - removed duplicate conditions and incorrect logic
+    if (!formData.name || !formData.email || !formData.description || !formData.projectType || !formData.timeline || !formData.budget) {
       setSubmitStatus({
         type: "error", 
         message: "Please fill in all required fields marked with *."
@@ -67,12 +153,32 @@ const Contact = () => {
     } 
 
     try {
+      // Upload files to Cloudinary first
+      let uploadedFiles = [];
+      if (files.length > 0) {
+        setSubmitStatus({
+          type: "info",
+          message: `Uploading ${files.length} file(s)...`
+        });
+
+        for (let file of files) {
+          const uploadResult = await uploadToCloudinary(file);
+          uploadedFiles.push(uploadResult);
+        }
+      }
+
+      // Submit form data with file URLs
+      const submissionData = {
+        ...formData,
+        files: uploadedFiles
+      };
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -84,10 +190,9 @@ const Contact = () => {
 
       if(result.ok){
         setSubmitStatus({
-        type: "success",
-        message:
-          "Thank you! Your project inquiry has been submitted successfully. We'll get back to you within 24 hours.",
-      });
+          type: "success",
+          message: "Thank you! Your project inquiry has been submitted successfully. We'll get back to you within 24 hours.",
+        });
       }
 
       // Reset form
@@ -100,15 +205,17 @@ const Contact = () => {
         budget: "",
         timeline: "",
         description: "",
-        files: null,
       });
+      setFiles([]);
+      setFilePreviews([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       setSubmitStatus({
         type: "error",
-        message:
-          error.message ||
-          "Sorry, there was an error submitting your request. Please try again.",
+        message: error.message || "Sorry, there was an error submitting your request. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -119,6 +226,13 @@ const Contact = () => {
   const clearStatus = () => {
     setSubmitStatus(null);
   };
+
+  // Clean up object URLs when component unmounts
+  React.useEffect(() => {
+    return () => {
+      filePreviews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, [filePreviews]);
 
   return (
     <section className={styles.contactSection} id="contact">
@@ -192,11 +306,22 @@ const Contact = () => {
               <CustomSelect
                 name="projectType"
                 value={formData.projectType}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, projectType: value }))
-                }
+                onChange={(value) => handleSelectChange("projectType", value)}
                 placeholder="What Type of Project?"
                 options={projectTypeOptions}
+                disabled={loading}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="budget">Estimated Budget *</label>
+              <input
+                name="budget"
+                type="text"
+                value={formData.budget}
+                onChange={handleChange}
+                placeholder="What is your budget range?"
+                required
                 disabled={loading}
               />
             </div>
@@ -206,9 +331,7 @@ const Contact = () => {
               <CustomSelect
                 name="timeline"
                 value={formData.timeline}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, timeline: value }))
-                }
+                onChange={(value) => handleSelectChange("timeline", value)}
                 placeholder="Select Timeline"
                 options={timelineOptions}
                 disabled={loading}
@@ -231,17 +354,60 @@ const Contact = () => {
 
             <div className={styles.formGroup}>
               <label htmlFor="files">Attach Files (Optional)</label>
-              <input
-                type="file"
-                id="files"
-                name="files"
-                onChange={handleChange}
-                multiple
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                disabled={loading}
-              />
+              <div className={styles.fileInputWrapper}>
+                <input
+                  type="file"
+                  id="files"
+                  name="files"
+                  onChange={handleFileChange}
+                  multiple
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  disabled={loading}
+                  ref={fileInputRef}
+                />
+                <div className={styles.fileInputLabel}>
+                  <FaPaperPlane />
+                  <span>Choose files or drag & drop here</span>
+                </div>
+              </div>
+              
+              {/* File previews */}
+              {files.length > 0 && (
+                <div className={styles.filePreviews}>
+                  {files.map((file, index) => (
+                    <div key={index} className={styles.filePreview}>
+                      {filePreviews[index] ? (
+                        <div className={styles.imagePreview}>
+                          <img src={filePreviews[index]} alt={file.name} />
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className={styles.removeFileBtn}
+                            disabled={loading}
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className={styles.fileInfo}>
+                          <span>{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className={styles.removeFileBtn}
+                            disabled={loading}
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               <small>
-                Supported formats: PDF, DOC, JPG, PNG (Max 10MB each)
+                Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max 10MB each)
               </small>
             </div>
 
@@ -253,10 +419,13 @@ const Contact = () => {
               {loading ? (
                 <>
                   <div className={styles.loadingSpinner}></div>
-                  Sending Request...
+                  {submitStatus?.type === "info" ? "Uploading Files..." : "Sending Request..."}
                 </>
               ) : (
-                "Send Job Request"
+                <>
+                  <FaPaperPlane />
+                  Send Job Request
+                </>
               )}
             </button>
             {submitStatus && (
@@ -264,9 +433,15 @@ const Contact = () => {
                 className={`${styles.statusMessage} ${
                   styles[submitStatus.type]
                 }`}
-                onClick={clearStatus}
               >
-                <span>{submitStatus.message}</span>
+                <div className={styles.statusIcon}>
+                  {submitStatus.type === "success" ? <FaCheckCircle /> : 
+                   submitStatus.type === "info" ? <FaPaperPlane /> : 
+                   <FaExclamationTriangle />}
+                </div>
+                <div className={styles.statusContent}>
+                  <span>{submitStatus.message}</span>
+                </div>
                 <button
                   type="button"
                   className={styles.closeStatus}

@@ -14,6 +14,7 @@ import {
   FiFileText,
   FiCornerDownLeft,
   FiRefreshCw,
+  FiPaperclip,
 } from "react-icons/fi";
 import FlexibleSelect from "@/components/UI/FlexibleSelect/FlexibleSelect";
 
@@ -28,7 +29,7 @@ const ClientRequests = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // API Service Functions
+  // API Service Functions - Updated to use main route
   const clientRequestsAPI = {
     // GET all client requests with filters
     getAllRequests: async (statusFilter = "all", typeFilter = "all") => {
@@ -48,12 +49,15 @@ const ClientRequests = () => {
     // UPDATE client request (add reply or change status)
     updateRequest: async (requestId, updateData) => {
       try {
-        const response = await fetch(`/api/client-requests/${requestId}`, {
+        const response = await fetch("/api/client-requests", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updateData),
+          body: JSON.stringify({
+            id: requestId,
+            ...updateData
+          }),
         });
         if (!response.ok) throw new Error("Failed to update client request");
         return await response.json();
@@ -65,8 +69,12 @@ const ClientRequests = () => {
     // DELETE client request
     deleteRequest: async (requestId) => {
       try {
-        const response = await fetch(`/api/client-requests/${requestId}`, {
+        const response = await fetch("/api/client-requests", {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: requestId }),
         });
         if (!response.ok) throw new Error("Failed to delete client request");
         return await response.json();
@@ -74,6 +82,27 @@ const ClientRequests = () => {
         throw new Error(`Error deleting client request: ${error.message}`);
       }
     },
+
+    // SEND REPLY with nodemailer
+    sendReply: async (requestId, replyData) => {
+      try {
+        const response = await fetch("/api/client-requests", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "send-reply",
+            requestId,
+            ...replyData
+          }),
+        });
+        if (!response.ok) throw new Error("Failed to send reply");
+        return await response.json();
+      } catch (error) {
+        throw new Error(`Error sending reply: ${error.message}`);
+      }
+    }
   };
 
   // Load requests on component mount and when filters change
@@ -110,7 +139,7 @@ const ClientRequests = () => {
     setReplyMessage("");
   };
 
-  // Send reply
+  // Send reply with nodemailer
   const handleSendReply = async () => {
     if (!replyMessage.trim()) {
       alert("Please enter a reply message.");
@@ -126,6 +155,17 @@ const ClientRequests = () => {
         sentBy: "Admin",
       };
 
+      // First, send the email via nodemailer
+      const emailResult = await clientRequestsAPI.sendReply(replyingTo.id, {
+        replyMessage: replyMessage,
+        replyData: newReply
+      });
+
+      if (!emailResult.success) {
+        throw new Error(emailResult.error || "Failed to send email");
+      }
+
+      // Then update the request in database with the new reply
       const updatedRequest = await clientRequestsAPI.updateRequest(
         replyingTo.id,
         {
@@ -146,16 +186,12 @@ const ClientRequests = () => {
         setViewingRequest(updatedRequest);
       }
 
-      // In a real app, you would send the email here
-      console.log("Sending email to:", replyingTo.email);
-      console.log("Subject: Re:", replyingTo.subject);
-      console.log("Message:", replyMessage);
-
       setReplyingTo(null);
       setReplyMessage("");
-      alert("Reply sent successfully!");
+      alert("Reply sent successfully via email!");
     } catch (err) {
       setError(err.message);
+      alert("Failed to send reply: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -250,6 +286,21 @@ const ClientRequests = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  // Helper function to get file icon
+  const getFileIcon = (fileName) => {
+    const extension = fileName?.split('.').pop()?.toLowerCase();
+    const icons = {
+      pdf: '📄',
+      doc: '📝',
+      docx: '📝',
+      jpg: '🖼️',
+      jpeg: '🖼️',
+      png: '🖼️',
+      default: '📎'
+    };
+    return icons[extension] || icons.default;
   };
 
   if (loading && requests.length === 0) {
@@ -425,6 +476,14 @@ const ClientRequests = () => {
                         Form: {request.formData?.formTitle}
                       </p>
                     )}
+
+                    {/* Show attachment count if any */}
+                    {request.attachments && request.attachments.length > 0 && (
+                      <div className={styles.attachmentsPreview}>
+                        <FiPaperclip />
+                        <span>{request.attachments.length} attachment(s)</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className={styles.requestMeta}>
@@ -477,6 +536,8 @@ const ClientRequests = () => {
                   <div>
                     <h3>{viewingRequest.name}</h3>
                     <p>{viewingRequest.email}</p>
+                    {viewingRequest.phone && <p>{viewingRequest.phone}</p>}
+                    {viewingRequest.company && <p>{viewingRequest.company}</p>}
                   </div>
                 </div>
 
@@ -500,6 +561,21 @@ const ClientRequests = () => {
                       {getStatusInfo(viewingRequest.status).label}
                     </span>
                   </div>
+                  {viewingRequest.projectType && (
+                    <div className={styles.metaItem}>
+                      <strong>Project Type:</strong> {viewingRequest.projectType}
+                    </div>
+                  )}
+                  {viewingRequest.budget && (
+                    <div className={styles.metaItem}>
+                      <strong>Budget:</strong> {viewingRequest.budget}
+                    </div>
+                  )}
+                  {viewingRequest.timeline && (
+                    <div className={styles.metaItem}>
+                      <strong>Timeline:</strong> {viewingRequest.timeline}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -517,8 +593,7 @@ const ClientRequests = () => {
                     </h5>
                     <div className={styles.formFields}>
                       {viewingRequest.formData?.submissionData
-                        ? // For new schema with submissionData Map
-                          Object.entries(
+                        ? Object.entries(
                             viewingRequest.formData.submissionData
                           ).map(([fieldId, value], index) => (
                             <div key={index} className={styles.formField}>
@@ -526,8 +601,7 @@ const ClientRequests = () => {
                               <span>{value}</span>
                             </div>
                           ))
-                        : // Fallback for old schema with fields array
-                          viewingRequest.formData?.fields?.map(
+                        : viewingRequest.formData?.fields?.map(
                             (field, index) => (
                               <div key={index} className={styles.formField}>
                                 <label>{field.label}:</label>
@@ -535,6 +609,35 @@ const ClientRequests = () => {
                               </div>
                             )
                           ) || <p>No form data available</p>}
+                    </div>
+                  </div>
+                )}
+
+                {/* Show Attachments */}
+                {viewingRequest.attachments && viewingRequest.attachments.length > 0 && (
+                  <div className={styles.attachmentsSection}>
+                    <h5>Attachments</h5>
+                    <div className={styles.attachmentsList}>
+                      {viewingRequest.attachments.map((attachment, index) => (
+                        <div key={index} className={styles.attachmentItem}>
+                          <span className={styles.fileIcon}>
+                            {getFileIcon(attachment.originalName)}
+                          </span>
+                          <div className={styles.fileInfo}>
+                            <span className={styles.fileName}>
+                              {attachment.originalName}
+                            </span>
+                            <a 
+                              href={attachment.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className={styles.fileLink}
+                            >
+                              View File
+                            </a>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -564,7 +667,7 @@ const ClientRequests = () => {
                   className={styles.replyBtn}
                   disabled={viewingRequest.status === "closed" || loading}
                 >
-                  <FiCornerDownLeft /> Reply
+                  <FiCornerDownLeft /> Reply via Email
                 </button>
                 <button
                   onClick={() => handleMarkAsClosed(viewingRequest.id)}
@@ -591,7 +694,7 @@ const ClientRequests = () => {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h2>Send Reply</h2>
+              <h2>Send Email Reply</h2>
               <button
                 onClick={() => setReplyingTo(null)}
                 className={styles.closeModalBtn}
@@ -610,6 +713,9 @@ const ClientRequests = () => {
                 <p>
                   <strong>Subject:</strong> Re: {replyingTo.subject}
                 </p>
+                <p className={styles.emailNote}>
+                  This reply will be sent via email and saved in the conversation history.
+                </p>
               </div>
 
               <div className={styles.formGroup}>
@@ -617,7 +723,7 @@ const ClientRequests = () => {
                 <textarea
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
-                  placeholder="Type your reply message here..."
+                  placeholder="Type your reply message here. This will be sent as an email to the client..."
                   rows="8"
                   className={styles.replyTextarea}
                   disabled={loading}
@@ -635,7 +741,7 @@ const ClientRequests = () => {
                   ) : (
                     <FiSend />
                   )}
-                  Send Reply
+                  Send Email Reply
                 </button>
                 <button
                   onClick={() => setReplyingTo(null)}

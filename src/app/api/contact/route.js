@@ -2,7 +2,7 @@ import { connectMongoDB } from "@/libs/config/db";
 import { ClientRequestModel } from "@/libs/models/ClientRequestModel";
 import nodemailer from "nodemailer";
 
-// Create transporter for Gmail - FIXED: use createTransport instead of createTransporter
+// Create transporter for Gmail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -25,7 +25,8 @@ export async function POST(request) {
       projectType, 
       budget, 
       timeline, 
-      description 
+      description,
+      files = [] // Added files array from Cloudinary uploads
     } = body;
 
     // Validate required fields
@@ -64,7 +65,12 @@ export async function POST(request) {
       replies: [],
       formId: null,
       formData: null,
-      attachments: []
+      attachments: files.map(file => ({
+        url: file.url,
+        publicId: file.publicId,
+        originalName: file.originalName,
+        uploadedAt: new Date()
+      }))
     });
 
     const savedRequest = await newContactRequest.save();
@@ -80,6 +86,7 @@ export async function POST(request) {
         budget,
         timeline,
         description,
+        files, // Pass files to email template
         requestId: savedRequest.id,
         submittedAt: new Date().toLocaleString()
       });
@@ -98,7 +105,8 @@ export async function POST(request) {
     return new Response(
       JSON.stringify({ 
         message: 'Contact request submitted successfully',
-        request: savedRequest 
+        request: savedRequest,
+        ok: true // Added ok flag for frontend validation
       }),
       {
         status: 201,
@@ -117,9 +125,43 @@ export async function POST(request) {
   }
 }
 
-// Function to generate beautiful email template
+// Function to generate beautiful email template with file attachments
 function generateEmailTemplate(formData) {
-  const { name, email, phone, company, projectType, budget, timeline, description, requestId, submittedAt } = formData;
+  const { 
+    name, 
+    email, 
+    phone, 
+    company, 
+    projectType, 
+    budget, 
+    timeline, 
+    description, 
+    files = [], // Added files parameter
+    requestId, 
+    submittedAt 
+  } = formData;
+  
+  // Helper function to get file type icon
+  const getFileIcon = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    const icons = {
+      pdf: '📄',
+      doc: '📝',
+      docx: '📝',
+      jpg: '🖼️',
+      jpeg: '🖼️',
+      png: '🖼️',
+      default: '📎'
+    };
+    return icons[extension] || icons.default;
+  };
+
+  // Helper function to format file size
+  const formatFileSize = (url) => {
+    // Since we don't have file size from Cloudinary, we'll show the file type
+    const extension = url.split('.').pop().toLowerCase();
+    return extension.toUpperCase() + ' File';
+  };
   
   return `
 <!DOCTYPE html>
@@ -251,6 +293,85 @@ function generateEmailTemplate(formData) {
             line-height: 1.7;
             white-space: pre-wrap;
         }
+
+        /* File Attachments Section */
+        .attachments-section {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #6CE0F6;
+            margin: 25px 0;
+        }
+
+        .attachments-label {
+            font-weight: 600;
+            color: #6CE0F6;
+            margin-bottom: 15px;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .attachments-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .attachment-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #FAFAFF;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .file-link {
+            background: linear-gradient(135deg, #32D0EB 0%, #6CE0F6 100%);
+            color: #083365;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .file-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(50, 208, 235, 0.3);
+        }
         
         .metadata {
             background: rgba(255, 255, 255, 0.05);
@@ -311,6 +432,16 @@ function generateEmailTemplate(formData) {
             
             .header-title {
                 font-size: 1.5rem;
+            }
+
+            .attachment-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .file-info {
+                text-align: center;
             }
         }
     </style>
@@ -381,18 +512,44 @@ function generateEmailTemplate(formData) {
                 <span class="description-label">Project Description:</span>
                 <div class="description-content">${description}</div>
             </div>
+
+            ${files.length > 0 ? `
+            <div class="attachments-section">
+                <span class="attachments-label">📎 Attached Files (${files.length})</span>
+                <div class="attachments-grid">
+                    ${files.map(file => `
+                    <div class="attachment-item">
+                        <div class="file-icon">${getFileIcon(file.originalName)}</div>
+                        <div class="file-info">
+                            <div class="file-name">${file.originalName}</div>
+                            <div class="file-meta">${formatFileSize(file.url)} • Cloudinary</div>
+                        </div>
+                        <a href="${file.url}" target="_blank" class="file-link">View File</a>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
             
             <div class="metadata">
                 <strong>Submission Details:</strong><br>
                 Request ID: ${requestId}<br>
                 Submitted: ${submittedAt}<br>
+                ${files.length > 0 ? `Attachments: ${files.length} file(s)<br>` : ''}
                 <br>
                 <em>Please respond to this inquiry within 24 hours.</em>
             </div>
             
-            <a href="mailto:${email}" class="cta-button">
-                📧 Reply to Client
-            </a>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="mailto:${email}" class="cta-button">
+                    📧 Reply to Client
+                </a>
+                ${files.length > 0 ? `
+                <a href="#attachments" class="cta-button" style="background: linear-gradient(135deg, #6CE0F6 0%, #32D0EB 100%);">
+                    📎 Review Files (${files.length})
+                </a>
+                ` : ''}
+            </div>
         </div>
         
         <div class="email-footer">
