@@ -600,7 +600,20 @@ textarea:disabled {
   .contactMethod {
     flex-direction: column;
     text-align: center;
+    align-items: center;
     gap: 10px;
+  }
+
+  .methodInfo h4{
+      text-align: center;
+  }
+
+  .methodInfo p{
+      text-align: center;
+  }
+
+  .methodInfo span{
+      text-align: center;
   }
   
   .methodIcon {
