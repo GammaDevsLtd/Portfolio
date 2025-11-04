@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
 
@@ -12,6 +14,7 @@ export function middleware(request) {
     verify(cookie.value, secret);
     return NextResponse.next();
   } catch (error) {
+    console.error("JWT verification failed:", error);
     return NextResponse.redirect(loginUrl);
   }
 }

@@ -57,15 +57,15 @@ const MobileNavbar = ({ activeSection, links, isMenuOpen, setIsMenuOpen }) => {
         <div className={styles.mobileSocialsSection}>
           <Link href="/#contact" className={styles.mobileBook}>Book Us</Link>
           <div className={styles.mobileSocials}>
-            <span className={styles.mobileSocialLink}>
+             <Link href="https://www.instagram.com/gammadevs?igsh=ZGE4MWxpaXcxcGQ0" onClick={() => setIsMenuOpen(false)} target="_blank" className={styles.sociallinks}>
               <FaInstagram />
-            </span>
-            <span className={styles.mobileSocialLink}>
+            </Link>
+            <Link href="Check out GammaDevs (@GammaDevs): https://x.com/GammaDevs?t=bBCm9bKIiwQVHzaQO6Frmg&s=08" target="_blank" className={styles.sociallinks} onClick={() => setIsMenuOpen(false)}>
               <FaXTwitter />
-            </span>
-            <span className={styles.mobileSocialLink}>
+            </Link>
+            <Link href="https://www.linkedin.com/company/gammadevs/" onClick={() => setIsMenuOpen(false)} target="_blank" className={styles.sociallinks}>
               <IoLogoLinkedin />
-            </span>
+            </Link>
           </div>
         </div>
       </div>
@@ -157,15 +157,15 @@ const Navbar = () => {
         <div className={styles.socials}>
           <Link href="/#contact" className={styles.book}>Book Us</Link>
           <div className={styles.social}>
-            <span className={styles.sociallinks}>
+            <Link href="https://www.instagram.com/gammadevs?igsh=ZGE4MWxpaXcxcGQ0" target="_blank" className={styles.sociallinks}>
               <FaInstagram />
-            </span>
-            <span className={styles.sociallinks}>
+            </Link>
+            <Link href="Check out GammaDevs (@GammaDevs): https://x.com/GammaDevs?t=bBCm9bKIiwQVHzaQO6Frmg&s=08" target="_blank" className={styles.sociallinks}>
               <FaXTwitter />
-            </span>
-            <span className={styles.sociallinks}>
+            </Link>
+            <Link href="https://www.linkedin.com/company/gammadevs/" target="_blank" className={styles.sociallinks}>
               <IoLogoLinkedin />
-            </span>
+            </Link>
           </div>
         </div>
 
