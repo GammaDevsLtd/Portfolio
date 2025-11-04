@@ -50,7 +50,7 @@ const LoginPage = () => {
 
       if (res.ok) {
         setSuccess(data.message || "Login Successful");
-        router.push("/login")
+        router.push("/admin")
       }
     } catch (error) {
       console.error("Login error:", error);

@@ -3,8 +3,17 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styles from "./Team.module.css";
 import { IoExitOutline } from "react-icons/io5";
-import { FaXTwitter } from "react-icons/fa6";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import {
+  FiLinkedin,
+  FiTwitter,
+  FiGithub,
+  FiInstagram,
+  FiFacebook,
+  FiDribbble,
+  FiGlobe,
+  FiMail,
+} from "react-icons/fi";
+import { FaBehance } from "react-icons/fa";
 import Image from "next/image";
 
 export const Team = () => {
@@ -12,6 +21,22 @@ export const Team = () => {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Function to render icon based on string value
+  const renderIcon = (iconName) => {
+    const icons = {
+      FiLinkedin: <FiLinkedin />,
+      FiTwitter: <FiTwitter />,
+      FiGithub: <FiGithub />,
+      FiInstagram: <FiInstagram />,
+      FiFacebook: <FiFacebook />,
+      FiDribbble: <FiDribbble />,
+      FaBehance: <FaBehance />,
+      FiGlobe: <FiGlobe />,
+      FiMail: <FiMail />,
+    };
+    return icons[iconName] || <FiGlobe />; // Default to globe if icon not found
+  };
 
   // Fetch teams from API
   useEffect(() => {
@@ -156,21 +181,18 @@ export const Team = () => {
                     </a>
                   )}
                   <div className={styles.social}>
-                    {team.twitter && (
-                      <a href={team.twitter} className={styles.icon} target="_blank" rel="noopener noreferrer">
-                        <FaXTwitter />
+                    {team.socials?.map((social, idx) => (
+                      <a
+                        key={idx}
+                        href={social.url}
+                        className={styles.icon}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={social.platform}
+                      >
+                        {renderIcon(social.icon)}
                       </a>
-                    )}
-                    {team.linkedin && (
-                      <a href={team.linkedin} className={styles.icon} target="_blank" rel="noopener noreferrer">
-                        <FaLinkedin />
-                      </a>
-                    )}
-                    {team.github && (
-                      <a href={team.github} className={styles.icon} target="_blank" rel="noopener noreferrer">
-                        <FaGithub />
-                      </a>
-                    )}
+                    ))}
                   </div>
                 </div>
               </div>
