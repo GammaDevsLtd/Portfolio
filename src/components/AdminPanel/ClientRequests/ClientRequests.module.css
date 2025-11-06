@@ -1007,3 +1007,266 @@
     font-size: 1rem;
   }
 }
+
+/* Add these styles to your existing CSS file */
+
+/* Attachments Section */
+.attachmentsSection {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attachmentsSection h5 {
+  margin: 0 0 1rem 0;
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.attachmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.attachmentItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.attachmentItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(4px);
+}
+
+.fileIcon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.fileName {
+  color: var(--white);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.fileLink {
+  color: var(--light-blue);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.fileLink:hover {
+  color: var(--lighter-blue);
+  text-decoration: underline;
+}
+
+/* Conversation Section */
+.conversation {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.conversation h5 {
+  margin: 0 0 1.5rem 0;
+  color: var(--white);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conversation h5::before {
+  content: "💬";
+  font-size: 1rem;
+}
+
+.noReplies {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reply {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.reply:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.replyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.replyHeader strong {
+  color: var(--light-blue);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.replyHeader span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+.replyMessage {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Email Note */
+.emailNote {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem;
+  background: rgba(50, 208, 235, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid var(--light-blue);
+}
+
+/* Form Submission Preview */
+.formSubmission {
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+  background: rgba(50, 208, 235, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--light-blue);
+}
+
+/* Enhanced Status Badge */
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Request Type Enhancement */
+.requestType {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--white);
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Replies Count Enhancement */
+.repliesCount {
+  background: linear-gradient(135deg, var(--light-blue), var(--lighter-blue));
+  color: var(--dark-blue);
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(50, 208, 235, 0.3);
+}
+
+/* Loading State for Replies */
+.reply .loading {
+  opacity: 0.7;
+}
+
+/* Responsive Design for Conversation */
+@media (max-width: 768px) {
+  .conversation {
+    padding: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .replyHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .attachmentsList {
+    gap: 0.5rem;
+  }
+  
+  .attachmentItem {
+    padding: 0.6rem;
+  }
+  
+  .fileInfo {
+    gap: 0.15rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .conversation {
+    padding: 0.75rem;
+    margin-top: 1rem;
+  }
+  
+  .reply {
+    padding: 1rem;
+  }
+  
+  .attachmentItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .fileInfo {
+    width: 100%;
+  }
+}

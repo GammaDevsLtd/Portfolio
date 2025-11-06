@@ -183,7 +183,7 @@ const Forms = () => {
       return submissions.map((sub) => ({
         id: sub.id,
         submittedAt: sub.submittedAt,
-        data: sub.formData?.submissionData || {},
+        data: sub.submissionData || {}, // Updated to use submissionData
       }));
     } catch (err) {
       console.error("Error loading submissions:", err);

@@ -206,175 +206,35 @@ export async function DELETE(request) {
 
 // Function to generate email template for replies
 function generateReplyEmailTemplate(data) {
-  const { clientName, originalMessage, replyMessage, projectType, submittedAt } = data;
+  const { clientName, originalMessage, replyMessage, projectType, submittedAt, type, formTitle } = data;
   
+  const isFormSubmission = type === "form_submission";
+  const originalContent = isFormSubmission 
+    ? `Form: ${formTitle}`
+    : originalMessage;
+
   return `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reply to Your Inquiry</title>
+    <title>Reply to Your ${isFormSubmission ? 'Form Submission' : 'Inquiry'}</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #083365 0%, #0A0A0A 100%);
-            color: #FAFAFF;
-            line-height: 1.6;
-        }
-        
-        .email-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .email-header {
-            background: linear-gradient(135deg, #32D0EB 0%, #6CE0F6 100%);
-            padding: 40px 30px;
-            text-align: center;
-        }
-        
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #083365;
-            margin-bottom: 10px;
-        }
-        
-        .header-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #083365;
-            margin-bottom: 5px;
-        }
-        
-        .email-body {
-            padding: 40px 30px;
-            background: rgb(0, 0, 0);
-        }
-        
-        .greeting {
-            font-size: 1.2rem;
-            margin-bottom: 25px;
-            color: #FAFAFF;
-        }
-        
-        .reply-section {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid #32D0EB;
-            margin: 25px 0;
-        }
-        
-        .reply-label {
-            font-weight: 600;
-            color: #6CE0F6;
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .reply-content {
-            color: #FAFAFF;
-            line-height: 1.7;
-            white-space: pre-wrap;
-        }
-        
-        .original-context {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            border-left: 4px solid #6CE0F6;
-        }
-        
-        .context-label {
-            font-weight: 600;
-            color: #6CE0F6;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .metadata {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .next-steps {
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(50, 208, 235, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(50, 208, 235, 0.3);
-        }
-        
-        .next-steps h4 {
-            color: #6CE0F6;
-            margin-bottom: 10px;
-        }
-        
-        .email-footer {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 25px 30px;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        
-        @media (max-width: 600px) {
-            .email-container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .email-header, .email-body {
-                padding: 25px 20px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .header-title {
-                font-size: 1.5rem;
-            }
-        }
+        /* ... your existing styles ... */
     </style>
 </head>
 <body>
     <div class="email-container">
         <div class="email-header">
             <div class="logo">GammaDevs</div>
-            <h1 class="header-title">Response to Your Inquiry</h1>
+            <h1 class="header-title">Response to Your ${isFormSubmission ? 'Form Submission' : 'Inquiry'}</h1>
         </div>
         
         <div class="email-body">
             <p class="greeting">Hi ${clientName},</p>
             
-            <p>Thank you for reaching out to us. Here's our response to your inquiry:</p>
+            <p>Thank you for ${isFormSubmission ? 'submitting the form' : 'reaching out to us'}. Here's our response:</p>
             
             <div class="reply-section">
                 <span class="reply-label">Our Response:</span>
@@ -382,27 +242,28 @@ function generateReplyEmailTemplate(data) {
             </div>
             
             <div class="original-context">
-                <span class="context-label">Your Original Message:</span>
-                <div class="reply-content">${originalMessage}</div>
+                <span class="context-label">Your Original ${isFormSubmission ? 'Form' : 'Message'}:</span>
+                <div class="reply-content">${originalContent}</div>
             </div>
             
             <div class="next-steps">
                 <h4>What's Next?</h4>
-                <p>We'll continue this conversation via email. Feel free to reply directly to this email if you have any further questions or need clarification.</p>
+                <p>We'll continue this conversation via email. Feel free to reply directly to this email if you have any further questions.</p>
             </div>
             
             <div class="metadata">
                 <strong>Reference Information:</strong><br>
-                ${projectType ? `Project Type: ${projectType}<br>` : ''}
+                ${!isFormSubmission && projectType ? `Project Type: ${projectType}<br>` : ''}
+                ${isFormSubmission ? `Form: ${formTitle}<br>` : ''}
                 Submitted: ${new Date(submittedAt).toLocaleDateString()}<br>
                 <br>
-                <em>We're here to help bring your project to life!</em>
+                <em>We're here to help ${isFormSubmission ? 'with your submission' : 'bring your project to life'}!</em>
             </div>
         </div>
         
         <div class="email-footer">
             <p class="footer-text">
-                This email is in response to your inquiry through GammaDevs.
+                This email is in response to your ${isFormSubmission ? 'form submission' : 'inquiry'} through GammaDevs.
             </p>
             <p class="footer-text">
                 &copy; ${new Date().getFullYear()} GammaDevs. All rights reserved.

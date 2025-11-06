@@ -10,7 +10,7 @@ const replySchema = new Schema(
   { _id: false }
 );
 
-// NEW: Form template schema (for the Forms component)
+// Form template schema
 const formSchema = new Schema(
   {
     id: { type: String, required: true, unique: true },
@@ -27,7 +27,7 @@ const formSchema = new Schema(
         label: { type: String, required: true },
         required: { type: Boolean, default: false },
         placeholder: { type: String },
-        options: [{ type: String }] // For dropdown fields
+        options: [{ type: String }]
       }
     ],
     createdAt: { type: Date, default: Date.now },
@@ -45,42 +45,42 @@ const clientRequestSchema = new Schema(
       required: true,
     },
     formId: { type: String }, // For form submissions
+    formTitle: { type: String }, // Store form title for easy reference
     
-    // Contact form fields
-    name: { type: String, required: true },
-    email: { type: String, required: true },
+    // Contact form fields (optional - only for contact_form type)
+    name: { type: String },
+    email: { type: String },
     phone: { type: String },
     company: { type: String },
     projectType: { type: String },
     budget: { type: String },
     timeline: { type: String },
-    subject: { type: String, required: true }, // Auto-generated from project type
-    message: { type: String, required: true }, // Project description
+    subject: { type: String },
+    message: { type: String },
     
-    // For file attachments
+    // For file attachments (works for both types)
     attachments: [{
       filename: String,
+      originalName: String,
       url: String,
       size: Number,
       uploadedAt: { type: Date, default: Date.now }
     }],
     
-    // For form submissions - flexible form structure
-    formData: {
-      formTitle: { type: String },
-      submissionData: {
-        type: Map,
-        of: String
-      }
+    // Enhanced form submissions structure
+    submissionData: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed // Allow any type of data
     },
     
+    // Common fields for both types
     submittedAt: { type: Date, default: Date.now },
     status: {
       type: String,
       enum: ["new", "replied", "closed"],
       default: "new",
     },
-    replies: [replySchema],
+    replies: [replySchema], // Works for both contact forms and form submissions
   },
   { timestamps: true }
 );
@@ -95,4 +95,4 @@ const FormModel =
   mongoose.model("FormModel", formSchema);
 
 export { ClientRequestModel, FormModel };
-export default ClientRequestModel; 
+export default ClientRequestModel;

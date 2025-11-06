@@ -29,7 +29,7 @@ const ClientRequests = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // API Service Functions - Updated to use main route
+  // API Service Functions
   const clientRequestsAPI = {
     // GET all client requests with filters
     getAllRequests: async (statusFilter = "all", typeFilter = "all") => {
@@ -56,7 +56,7 @@ const ClientRequests = () => {
           },
           body: JSON.stringify({
             id: requestId,
-            ...updateData
+            ...updateData,
           }),
         });
         if (!response.ok) throw new Error("Failed to update client request");
@@ -94,7 +94,7 @@ const ClientRequests = () => {
           body: JSON.stringify({
             action: "send-reply",
             requestId,
-            ...replyData
+            ...replyData,
           }),
         });
         if (!response.ok) throw new Error("Failed to send reply");
@@ -102,7 +102,7 @@ const ClientRequests = () => {
       } catch (error) {
         throw new Error(`Error sending reply: ${error.message}`);
       }
-    }
+    },
   };
 
   // Load requests on component mount and when filters change
@@ -146,6 +146,12 @@ const ClientRequests = () => {
       return;
     }
 
+    // Check if we have an email to send to
+    if (!replyingTo.email) {
+      alert("Cannot send email: No email address found for this submission.");
+      return;
+    }
+
     setLoading(true);
     try {
       const newReply = {
@@ -158,7 +164,10 @@ const ClientRequests = () => {
       // First, send the email via nodemailer
       const emailResult = await clientRequestsAPI.sendReply(replyingTo.id, {
         replyMessage: replyMessage,
-        replyData: newReply
+        clientName: replyingTo.name,
+        originalSubject: replyingTo.subject,
+        formTitle: replyingTo.formTitle,
+        type: replyingTo.type,
       });
 
       if (!emailResult.success) {
@@ -170,7 +179,7 @@ const ClientRequests = () => {
         replyingTo.id,
         {
           status: "replied",
-          replies: [...replyingTo.replies, newReply],
+          replies: [...(replyingTo.replies || []), newReply],
         }
       );
 
@@ -290,15 +299,15 @@ const ClientRequests = () => {
 
   // Helper function to get file icon
   const getFileIcon = (fileName) => {
-    const extension = fileName?.split('.').pop()?.toLowerCase();
+    const extension = fileName?.split(".").pop()?.toLowerCase();
     const icons = {
-      pdf: '📄',
-      doc: '📝',
-      docx: '📝',
-      jpg: '🖼️',
-      jpeg: '🖼️',
-      png: '🖼️',
-      default: '📎'
+      pdf: "📄",
+      doc: "📝",
+      docx: "📝",
+      jpg: "🖼️",
+      jpeg: "🖼️",
+      png: "🖼️",
+      default: "📎",
     };
     return icons[extension] || icons.default;
   };
@@ -428,8 +437,14 @@ const ClientRequests = () => {
                     <button
                       className={styles.replyBtn}
                       onClick={() => handleStartReply(request)}
-                      title="Reply"
-                      disabled={request.status === "closed" || loading}
+                      title={
+                        !request.email
+                          ? "No email address to reply to"
+                          : "Reply"
+                      }
+                      disabled={
+                        request.status === "closed" || loading || !request.email
+                      }
                     >
                       <FiCornerDownLeft />
                     </button>
@@ -473,7 +488,7 @@ const ClientRequests = () => {
                       </p>
                     ) : (
                       <p className={styles.formSubmission}>
-                        Form: {request.formData?.formTitle}
+                        Form: {request.formTitle}
                       </p>
                     )}
 
@@ -490,7 +505,7 @@ const ClientRequests = () => {
                     <span className={styles.date}>
                       {formatDate(request.submittedAt)}
                     </span>
-                    {request.replies.length > 0 && (
+                    {request.replies && request.replies.length > 0 && (
                       <span className={styles.repliesCount}>
                         {request.replies.length} repl
                         {request.replies.length === 1 ? "y" : "ies"}
@@ -563,7 +578,8 @@ const ClientRequests = () => {
                   </div>
                   {viewingRequest.projectType && (
                     <div className={styles.metaItem}>
-                      <strong>Project Type:</strong> {viewingRequest.projectType}
+                      <strong>Project Type:</strong>{" "}
+                      {viewingRequest.projectType}
                     </div>
                   )}
                   {viewingRequest.budget && (
@@ -580,35 +596,48 @@ const ClientRequests = () => {
               </div>
 
               <div className={styles.detailContent}>
-                <h4>Subject: {viewingRequest.subject}</h4>
+                <h4>
+                  {viewingRequest.type === "contact_form"
+                    ? `Subject: ${viewingRequest.subject}`
+                    : `Form: ${viewingRequest.formTitle}`}
+                </h4>
 
-                {viewingRequest.message ? (
+                {viewingRequest.type === "contact_form" ? (
                   <div className={styles.messageContent}>
                     <p>{viewingRequest.message}</p>
+                    {/* Show contact form specific fields */}
+                    {viewingRequest.projectType && (
+                      <div className={styles.formField}>
+                        <label>Project Type:</label>
+                        <span>{viewingRequest.projectType}</span>
+                      </div>
+                    )}
+                    {viewingRequest.budget && (
+                      <div className={styles.formField}>
+                        <label>Budget:</label>
+                        <span>{viewingRequest.budget}</span>
+                      </div>
+                    )}
+                    {viewingRequest.timeline && (
+                      <div className={styles.formField}>
+                        <label>Timeline:</label>
+                        <span>{viewingRequest.timeline}</span>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className={styles.formData}>
-                    <h5>
-                      Form Submission: {viewingRequest.formData?.formTitle}
-                    </h5>
+                    <h5>Form Submission Data</h5>
                     <div className={styles.formFields}>
-                      {viewingRequest.formData?.submissionData
-                        ? Object.entries(
-                            viewingRequest.formData.submissionData
-                          ).map(([fieldId, value], index) => (
+                      {viewingRequest.submissionData &&
+                        Object.entries(viewingRequest.submissionData).map(
+                          ([fieldId, value], index) => (
                             <div key={index} className={styles.formField}>
                               <label>{fieldId}:</label>
-                              <span>{value}</span>
+                              <span>{String(value)}</span>
                             </div>
-                          ))
-                        : viewingRequest.formData?.fields?.map(
-                            (field, index) => (
-                              <div key={index} className={styles.formField}>
-                                <label>{field.label}:</label>
-                                <span>{field.value}</span>
-                              </div>
-                            )
-                          ) || <p>No form data available</p>}
+                          )
+                        )}
                     </div>
                   </div>
                 )}
@@ -621,20 +650,22 @@ const ClientRequests = () => {
                       {viewingRequest.attachments.map((attachment, index) => (
                         <div key={index} className={styles.attachmentItem}>
                           <span className={styles.fileIcon}>
-                            {getFileIcon(attachment.originalName)}
+                            {getFileIcon(attachment.filename || attachment.originalName)}
                           </span>
                           <div className={styles.fileInfo}>
                             <span className={styles.fileName}>
-                              {attachment.originalName}
+                              {attachment.filename || attachment.originalName}
                             </span>
-                            <a 
-                              href={attachment.url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className={styles.fileLink}
-                            >
-                              View File
-                            </a>
+                            {attachment.url && (
+                              <a 
+                                href={attachment.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className={styles.fileLink}
+                              >
+                                View File
+                              </a>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -642,10 +673,14 @@ const ClientRequests = () => {
                   </div>
                 )}
 
-                {/* Conversation Thread */}
-                {viewingRequest.replies.length > 0 && (
-                  <div className={styles.conversation}>
-                    <h5>Conversation</h5>
+                {/* Conversation Thread - ADDED THIS SECTION */}
+                <div className={styles.conversation}>
+                  <h5>Conversation History</h5>
+                  {(!viewingRequest.replies || viewingRequest.replies.length === 0) ? (
+                    <div className={styles.noReplies}>
+                      <p>No replies yet. Start the conversation by sending a reply.</p>
+                    </div>
+                  ) : (
                     <div className={styles.replies}>
                       {viewingRequest.replies.map((reply) => (
                         <div key={reply.id} className={styles.reply}>
@@ -653,19 +688,21 @@ const ClientRequests = () => {
                             <strong>{reply.sentBy}</strong>
                             <span>{formatDate(reply.sentAt)}</span>
                           </div>
-                          <p>{reply.message}</p>
+                          <div className={styles.replyMessage}>
+                            {reply.message}
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               <div className={styles.modalActions}>
                 <button
                   onClick={() => handleStartReply(viewingRequest)}
                   className={styles.replyBtn}
-                  disabled={viewingRequest.status === "closed" || loading}
+                  disabled={viewingRequest.status === "closed" || loading || !viewingRequest.email}
                 >
                   <FiCornerDownLeft /> Reply via Email
                 </button>
@@ -714,7 +751,8 @@ const ClientRequests = () => {
                   <strong>Subject:</strong> Re: {replyingTo.subject}
                 </p>
                 <p className={styles.emailNote}>
-                  This reply will be sent via email and saved in the conversation history.
+                  This reply will be sent via email and saved in the
+                  conversation history.
                 </p>
               </div>
 

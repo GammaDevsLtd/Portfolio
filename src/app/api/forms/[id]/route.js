@@ -6,7 +6,8 @@ export async function GET(request, { params }) {
   try {
     await connectMongoDB();
     
-    const { id } = params;
+    // Await the params promise
+    const { id } = await params;
     
     const form = await FormModel.findOne({ id });
     
@@ -41,7 +42,8 @@ export async function PUT(request, { params }) {
   try {
     await connectMongoDB();
     
-    const { id } = params;
+    // Await the params promise
+    const { id } = await params;
     const body = await request.json();
     const { title, description, fields } = body;
 
@@ -101,7 +103,8 @@ export async function DELETE(request, { params }) {
   try {
     await connectMongoDB();
     
-    const { id } = params;
+    // Await the params promise
+    const { id } = await params;
     
     // Delete the form
     const deletedForm = await FormModel.findOneAndDelete({ id });
