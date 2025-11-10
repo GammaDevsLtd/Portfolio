@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./ProjectDetails.module.css";
+import Image from "next/image"
 
 // 🔹 Import all possible icons
 import { PiFigmaLogoBold, PiFileCss, PiFileJs } from "react-icons/pi";
@@ -260,9 +261,11 @@ const ProjectDetails = () => {
             <section className={styles.gallerySection}>
               <div className={styles.gallery}>
                 <div className={styles.mainImage}>
-                  <img
+                  <Image
+                  fill
                     src={displayImages[activeImageIndex]}
                     alt={`${project.title} screenshot`}
+                    className={styles.cimage}
                   />
                   {displayImages.length > 1 && (
                     <>

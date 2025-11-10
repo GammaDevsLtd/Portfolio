@@ -1,20 +1,33 @@
-export const runtime = "nodejs";
-
 import { NextResponse } from 'next/server';
-import { verify } from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
-export function middleware(request) {
+export async function middleware(request) {
   const secret = process.env.JWT_SECRET;
   const cookie = request.cookies.get('ourSiteAuth');
   const loginUrl = new URL('/login', request.url);
 
-  if (!cookie) return NextResponse.redirect(loginUrl);
+  // 1. If there's no cookie, redirect to login
+  if (!cookie) {
+    return NextResponse.redirect(loginUrl);
+  }
 
+  // 2. We have a cookie, let's verify it
   try {
-    verify(cookie.value, secret);
+    // Get the cookie value
+    const token = cookie.value;
+
+    // Encode the secret
+    const secretKey = new TextEncoder().encode(secret);
+
+    // Verify the token
+    await jwtVerify(token, secretKey);
+
+    // If verification is successful, let the request continue
     return NextResponse.next();
+
   } catch (error) {
-    console.error("JWT verification failed:", error);
+    // 3. If verification fails (expired, invalid, etc.), redirect to login
+    console.error("JWT verification failed:", error.message);
     return NextResponse.redirect(loginUrl);
   }
 }

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Projects.module.css";
 import { PiFigmaLogoBold } from "react-icons/pi";
 import { RiNextjsFill, RiTailwindCssFill, RiSupabaseFill } from "react-icons/ri";
-import { FaReact, FaNode, FaHtml5, FaCss3Alt, FaPython, FaGithub } from "react-icons/fa";
+import { FaReact, FaNodeJs, FaHtml5, FaCss3Alt, FaPython, FaGithub } from "react-icons/fa";
 import { IoRocket } from "react-icons/io5";
 import { DiMongodb } from "react-icons/di";
 import { SiFramer, SiVuedotjs, SiFirebase } from "react-icons/si";
@@ -11,11 +11,13 @@ import { IoPrism } from "react-icons/io5";
 import { HiMiniCircleStack } from "react-icons/hi2";
 import Link from "next/link";
 
+
 // Function to render icon based on string value
 const renderIcon = (iconName) => {
+  console.log('Looking for icon:', iconName);
   const icons = {
     FaFigma: <PiFigmaLogoBold />,
-    FaNode: <FaNode />,
+    FaNode: <FaNodeJs />, // Now maps to FaNodeJs
     FaReact: <FaReact />,
     FaHtml5: <FaHtml5 />,
     FaCss3Alt: <FaCss3Alt />,
@@ -31,6 +33,12 @@ const renderIcon = (iconName) => {
     IoPrism: <IoPrism />,
     PiFigmaLogoBold: <PiFigmaLogoBold />,
   };
+  
+  if (!icons[iconName]) {
+    console.warn(`Icon not found: ${iconName}`);
+    console.log('Available icons:', Object.keys(icons));
+  }
+  
   return icons[iconName] || <HiMiniCircleStack />;
 };
 
@@ -185,7 +193,7 @@ const Projects = () => {
                       Visit site
                     </a>
                   )}
-                  <Link href={`/projects/${project.id}`} className={styles.viewDetails}>
+                  <Link href={`/projects/${project._id}`} className={styles.viewDetails}>
                     View Details
                   </Link>
                 </div>
