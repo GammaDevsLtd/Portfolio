@@ -475,6 +475,9 @@
   .projectContent {
     padding: 1.5rem;
   }
+  .projectDescription{
+    display: none;
+  }
 }
 
 /* Projects Count */

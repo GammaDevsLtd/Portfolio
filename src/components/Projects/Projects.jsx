@@ -182,11 +182,11 @@ const Projects = () => {
               </div>
               <div className={styles.content}>
                 <div className={styles.desc}>{project.description}</div>
-                <div className={styles.projectMeta}>
+                {/* <div className={styles.projectMeta}>
                   {project.category?.slice(0, 2).map((cat, index) => (
                     <span key={index} className={styles.categoryTag}>{cat}</span>
                   ))}
-                </div>
+                </div> */}
                 <div className={styles.cardActions}>
                   {project.liveLink && (
                     <a href={project.liveLink} className={styles.visit} target="_blank" rel="noopener noreferrer">
