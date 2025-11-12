@@ -68,7 +68,7 @@ export const Team = () => {
 
     const sliderInterval = setInterval(() => {
       setIndex((prev) => (prev + 1) % teams.length);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(sliderInterval);
   }, [teams.length]);

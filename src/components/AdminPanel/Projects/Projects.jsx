@@ -24,7 +24,7 @@ const CLOUDINARY_FOLDER = process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
 // IMPORTED ICON STACKS
 import {
   FaFigma,
-  FaNode,
+  FaNodeJs,
   FaReact,
   FaHtml5,
   FaCss3Alt,
@@ -76,20 +76,20 @@ const initialProjects = [
 
 const availableStacks = [
   { name: "Figma", value: "FaFigma", category: "Design" },
-  { name: "Node", value: "FaNode", category: "Backend" },
+  { name: "Node.js", value: "FaNodeJs", category: "Backend" },
   { name: "React", value: "FaReact", category: "Frontend" },
   { name: "HTML5", value: "FaHtml5", category: "Frontend" },
   { name: "CSS", value: "FaCss3Alt", category: "Frontend" },
   { name: "Python", value: "FaPython", category: "Backend" },
   { name: "GitHub", value: "FaGithub", category: "Tools" },
-  { name: "Nextjs", value: "RiNextjsFill", category: "Frontend" },
-  { name: "TailwindCSS", value: "RiTailwindCssFill", category: "Frontend" },
+  { name: "Next.js", value: "RiNextjsFill", category: "Frontend" },
+  { name: "Tailwind CSS", value: "RiTailwindCssFill", category: "Frontend" },
   { name: "Supabase", value: "RiSupabaseFill", category: "Backend" },
   { name: "MongoDB", value: "DiMongodb", category: "Database" },
   { name: "Framer", value: "SiFramer", category: "Design" },
-  { name: "Vue", value: "SiVuedotjs", category: "Frontend" },
+  { name: "Vue.js", value: "SiVuedotjs", category: "Frontend" },
   { name: "Firebase", value: "SiFirebase", category: "Backend" },
-  { name: "Prism", value: "IoPrism", category: "Tools" },
+  { name: "Prisma", value: "IoPrism", category: "Tools" }, // Corrected name for clarity
 ];
 
 const statusOptions = [
@@ -143,7 +143,7 @@ const Projects = () => {
   const renderIcon = (iconName) => {
     const icons = {
       FaFigma: <FaFigma />,
-      FaNode: <FaNode />,
+      FaNodeJs: <FaNodeJs />, // Key now matches component name
       FaReact: <FaReact />,
       FaHtml5: <FaHtml5 />,
       FaCss3Alt: <FaCss3Alt />,
@@ -361,8 +361,8 @@ const Projects = () => {
       ]);
       setSuccess("Project added successfully!");
       setIsAdding(false);
-      
-      if(response.ok) {
+
+      if (response.ok) {
         window.location.reload();
       }
 
