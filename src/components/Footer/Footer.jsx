@@ -1,8 +1,18 @@
-import React from 'react'
+"use client"
+import React from 'react' // We don't need useEffect or useState anymore
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation' // 1. Import the correct hook
 
 const Footer = () => {
+  const pathname = usePathname()
+
+  const isAdminPage = pathname.startsWith('/admin')
+
+  if (isAdminPage) {
+    return null
+  }
+
   return (
     <footer>
       <div className="grid gap-y-10 sm:grid-flow-col bg-[#083365] text-white p-10">
@@ -38,8 +48,8 @@ const Footer = () => {
         </nav>
         <nav>
           <h6 className="font-bold uppercase opacity-60 mb-2">Legal</h6>
-          <a className="block cursor-pointer hover:underline mb-1">Terms of use</a>
-          <a className="block cursor-pointer hover:underline">Privacy policy</a>
+          <Link href="/terms-conditions" className="block cursor-pointer hover:underline mb-1">Terms of use</Link>
+          <Link href="/privacy-policy" className="block cursor-pointer hover:underline">Privacy policy</Link>
         </nav>
       </div>
       

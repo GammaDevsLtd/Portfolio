@@ -10,22 +10,22 @@ import Contact from "@/components/Contact/Contact";
 const homePage = () => {
   return (
     <div className={styles.container}>
-      <section id="home">
+      <section className={styles.section} id="home">
         <Hero />
       </section>
-      <section id="about">
+      <section className={styles.section} id="about">
         <About />
       </section>
-      <section>
+      <section className={styles.section}>
         <Serve />
       </section>
-      <section id="team">
+      <section className={styles.section} id="team">
         <Team/>
       </section>
-      <section id="projects">
+      <section className={styles.section} id="projects">
         <Projects/>
       </section>
-      <section id="contact">
+      <section className={styles.section} id="contact">
         <Contact/>
       </section>
     </div>

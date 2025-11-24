@@ -362,9 +362,7 @@ const Projects = () => {
       setSuccess("Project added successfully!");
       setIsAdding(false);
 
-      if (response.ok) {
-        window.location.reload();
-      }
+      // No need to reload the page; local state is already updated
 
       return result.project;
     } catch (error) {
@@ -1008,9 +1006,9 @@ const Projects = () => {
                   <label>Status:</label>
                   <FlexibleSelect
                     options={statusOptions}
-                    value={newProject.status}
+                    value={editingProject.status}
                     onChange={(e) =>
-                      setNewProject((prev) => ({
+                      setEditingProject((prev) => ({
                         ...prev,
                         status: e.target.value,
                       }))

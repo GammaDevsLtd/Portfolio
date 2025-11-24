@@ -28,7 +28,11 @@ export async function POST(req) {
             backgroundImage: projectData.backgroundImage || "",
             liveLink: projectData.liveLink || "",
             githubLink: projectData.githubLink || "",
-            techStack: projectData.techStack || [],
+            techStack: (projectData.techStack || []).map(stack => ({
+                name: stack.name,
+                category: stack.category,
+                icon: stack.value || stack.icon  // Rename value to icon
+            })),
             features: projectData.features || [],
             challenges: projectData.challenges || [],
             solutions: projectData.solutions || [],
@@ -144,7 +148,11 @@ export async function PUT(req) {
                 backgroundImage: updateData.backgroundImage || "",
                 liveLink: updateData.liveLink || "",
                 githubLink: updateData.githubLink || "",
-                techStack: updateData.techStack || [],
+                techStack: (updateData.techStack || []).map(stack => ({
+                    name: stack.name,
+                    category: stack.category,
+                    icon: stack.value || stack.icon  // Rename value to icon
+                })),
                 features: updateData.features || [],
                 challenges: updateData.challenges || [],
                 solutions: updateData.solutions || [],

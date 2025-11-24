@@ -1,9 +1,24 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styles from "./ProjectsPage.module.css";
-import { PiFigmaLogoBold } from "react-icons/pi";
-import { RiNextjsFill } from "react-icons/ri";
-import { FaReact } from "react-icons/fa";
+import {
+  FaFigma,
+  FaNodeJs,
+  FaReact,
+  FaHtml5,
+  FaCss3Alt,
+  FaPython,
+  FaGithub,
+} from "react-icons/fa";
+import {
+  RiNextjsFill,
+  RiTailwindCssFill,
+  RiSupabaseFill,
+} from "react-icons/ri";
+import { DiMongodb } from "react-icons/di";
+import { SiFramer, SiVuedotjs, SiFirebase } from "react-icons/si";
+import { IoPrism } from "react-icons/io5";
+import { HiMiniCircleStack } from "react-icons/hi2";
 import Link from "next/link";
 
 // Category options from our earlier code
@@ -28,23 +43,29 @@ const ProjectsPage = () => {
   // Function to render icon based on string value
   const renderIcon = (iconName) => {
     const icons = {
-      FaFigma: <PiFigmaLogoBold />,
-      FaNode: <FaReact />, // Using React icon as fallback for Node
+      FaFigma: <FaFigma />,
+      FaNodeJs: <FaNodeJs />,
+      FaNode: <FaNodeJs />,
       FaReact: <FaReact />,
-      FaHtml5: <FaReact />, // Fallback
-      FaCss3Alt: <FaReact />, // Fallback
-      FaPython: <FaReact />, // Fallback
-      FaGithub: <FaReact />, // Fallback
+      FaHtml5: <FaHtml5 />,
+      FaCss3Alt: <FaCss3Alt />,
+      FaPython: <FaPython />,
+      FaGithub: <FaGithub />,
       RiNextjsFill: <RiNextjsFill />,
-      RiTailwindCssFill: <FaReact />, // Fallback
-      RiSupabaseFill: <FaReact />, // Fallback
-      DiMongodb: <FaReact />, // Fallback
-      SiFramer: <PiFigmaLogoBold />, // Using Figma as fallback for Framer
-      SiVuedotjs: <FaReact />, // Fallback
-      SiFirebase: <FaReact />, // Fallback
-      IoPrism: <FaReact />, // Fallback
+      RiTailwindCssFill: <RiTailwindCssFill />,
+      RiSupabaseFill: <RiSupabaseFill />,
+      DiMongodb: <DiMongodb />,
+      SiFramer: <SiFramer />,
+      SiVuedotjs: <SiVuedotjs />,
+      SiFirebase: <SiFirebase />,
+      SiMongodb: <DiMongodb />,
+      SiTailwindcss: <RiTailwindCssFill />,
+      SiTypescript: <FaReact />,
+      SiPostgresql: <FaReact />,
+      SiDjango: <FaPython />,
+      IoPrism: <IoPrism />,
     };
-    return icons[iconName] || <FaReact />;
+    return icons[iconName] || <HiMiniCircleStack />;
   };
 
   // Fetch projects from API
@@ -236,7 +257,7 @@ const ProjectsPage = () => {
                             className={styles.techIcon}
                             title={tech.name}
                           >
-                            {renderIcon(tech.value)}
+                            {renderIcon(tech.icon)}
                           </div>
                         ))}
                       </div>
@@ -313,7 +334,7 @@ const ProjectsPage = () => {
         <div className={styles.ctaContent}>
           <h2 className={styles.ctaTitle}>Have a Project in Mind?</h2>
           <p className={styles.ctaText}>
-            Let's collaborate to build something amazing together
+            {`Let's collaborate to build something amazing together`}
           </p>
           <Link href="/#contact" className={styles.ctaBtn}>
             Start a Project

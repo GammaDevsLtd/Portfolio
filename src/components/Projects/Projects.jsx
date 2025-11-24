@@ -26,7 +26,8 @@ import Link from "next/link";
 const renderIcon = (iconName) => {
   const icons = {
     FaFigma: <FaFigma />,
-    FaNodeJs: <FaNodeJs />, // Key now matches component name
+    FaNodeJs: <FaNodeJs />,
+    FaNode: <FaNodeJs />,
     FaReact: <FaReact />,
     FaHtml5: <FaHtml5 />,
     FaCss3Alt: <FaCss3Alt />,
@@ -36,9 +37,14 @@ const renderIcon = (iconName) => {
     RiTailwindCssFill: <RiTailwindCssFill />,
     RiSupabaseFill: <RiSupabaseFill />,
     DiMongodb: <DiMongodb />,
+    SiMongodb: <DiMongodb />,
     SiFramer: <SiFramer />,
     SiVuedotjs: <SiVuedotjs />,
     SiFirebase: <SiFirebase />,
+    SiTailwindcss: <RiTailwindCssFill />,
+    SiTypescript: <FaReact />,
+    SiPostgresql: <FaReact />,
+    SiDjango: <FaPython />,
     IoPrism: <IoPrism />,
   };
   return icons[iconName] || <HiMiniCircleStack />;
@@ -165,7 +171,7 @@ const Projects = () => {
             <div className={styles.stacks}>
               {project.techStack?.slice(0, 3).map((stack, index) => (
                 <div key={index} className={styles.icon} title={stack.name}>
-                  {renderIcon(stack.value)}
+                  {renderIcon(stack.icon)}
                 </div>
               ))}
               {project.techStack?.length > 3 && (

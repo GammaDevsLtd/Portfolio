@@ -36,31 +36,34 @@ import {
 import { DiMongodb } from "react-icons/di";
 import { IoPrism } from "react-icons/io5";
 import { HiMiniCircleStack } from "react-icons/hi2";
+import {
+  RiTailwindCssFill,
+  RiSupabaseFill,
+} from "react-icons/ri";
 
 // 🔹 Map icon strings → actual components (matching your Projects component)
 const iconMap = {
   FaFigma: <FaFigma />,
-  FaNode: <FaNode />,
+  FaNode: <FaNodeJs />,
+  FaNodeJs: <FaNodeJs />,
   FaReact: <FaReact />,
   FaHtml5: <FaHtml5 />,
   FaCss3Alt: <FaCss3Alt />,
   FaPython: <FaPython />,
   FaGithub: <FaGithub />,
   RiNextjsFill: <RiNextjsFill />,
-  RiTailwindCssFill: <SiTailwindcss />,
-  RiSupabaseFill: <SiSupabase />,
+  RiTailwindCssFill: <RiTailwindCssFill />,
+  RiSupabaseFill: <RiSupabaseFill />,
   DiMongodb: <DiMongodb />,
   SiFramer: <SiFramer />,
   SiVuedotjs: <SiVuedotjs />,
   SiFirebase: <SiFirebase />,
   IoPrism: <IoPrism />,
-  // Fallbacks
-  FaNodeJs: <FaNode />,
   SiMongodb: <DiMongodb />,
-  SiTailwindcss: <SiTailwindcss />,
-  SiTypescript: <SiTypescript />,
-  SiPostgresql: <SiPostgresql />,
-  SiDjango: <SiDjango />,
+  SiTailwindcss: <RiTailwindCssFill />,
+  SiTypescript: <FaReact />,
+  SiPostgresql: <FaReact />,
+  SiDjango: <FaPython />,
   PiFigmaLogoBold: <FaFigma />,
   PiFileCss: <FaCss3Alt />,
   PiFileJs: <FaReact />,
@@ -179,7 +182,7 @@ const ProjectDetails = () => {
         <div className={styles.notFound}>
           <h1>Project Not Found</h1>
           <p>
-            The project you're looking for doesn't exist or has been removed.
+            The project you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <button
             onClick={() => router.push("/projects")}
@@ -332,7 +335,7 @@ const ProjectDetails = () => {
                             {technologies.map((tech, i) => (
                               <div key={i} className={styles.techItem}>
                                 <span className={styles.techIcon}>
-                                  {iconMap[tech.value] || <HiMiniCircleStack />}
+                                  {iconMap[tech.icon] || <HiMiniCircleStack />}
                                 </span>
                                 <span>{tech.name}</span>
                               </div>
@@ -416,11 +419,11 @@ const ProjectDetails = () => {
         </div>
       </main>
 
-      {/* CTA Section */}
+      {/* CTA main */}
       <section className={styles.ctaSection}>
         <div className={styles.ctaContent}>
           <h2>Have a Similar Project in Mind?</h2>
-          <p>Let's discuss how we can bring your vision to life.</p>
+          <p>Let&apos;s discuss how we can bring your vision to life.</p>
           <button
             onClick={() => router.push("/#contact")}
             className={styles.ctaButton}
