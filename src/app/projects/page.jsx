@@ -40,8 +40,8 @@ const ProjectsPage = () => {
   const [visibleCount, setVisibleCount] = useState(PROJECTS_PER_PAGE);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // Function to render icon based on string value
-  const renderIcon = (iconName) => {
+  // Function to render icon based on string value or tech name
+  const renderIcon = (iconKeyOrName) => {
     const icons = {
       FaFigma: <FaFigma />,
       FaNodeJs: <FaNodeJs />,
@@ -60,12 +60,34 @@ const ProjectsPage = () => {
       SiFirebase: <SiFirebase />,
       SiMongodb: <DiMongodb />,
       SiTailwindcss: <RiTailwindCssFill />,
-      SiTypescript: <FaReact />,
-      SiPostgresql: <FaReact />,
-      SiDjango: <FaPython />,
       IoPrism: <IoPrism />,
     };
-    return icons[iconName] || <HiMiniCircleStack />;
+
+    // direct lookup (for values like 'FaReact', 'RiNextjsFill', etc.)
+    if (iconKeyOrName && icons[iconKeyOrName]) return icons[iconKeyOrName];
+
+    // normalize and attempt to match common tech names (e.g. 'React', 'Node', 'TailwindCSS')
+    const name = String(iconKeyOrName || "").trim().toLowerCase();
+    const nameMap = {
+      react: <FaReact />,
+      node: <FaNodeJs />,
+      'node.js': <FaNodeJs />,
+      'nodejs': <FaNodeJs />,
+      tailwind: <RiTailwindCssFill />,
+      tailwindcss: <RiTailwindCssFill />,
+      github: <FaGithub />,
+      figma: <FaFigma />,
+      html: <FaHtml5 />,
+      css: <FaCss3Alt />,
+      python: <FaPython />,
+      mongodb: <DiMongodb />,
+      framer: <SiFramer />,
+      vue: <SiVuedotjs />,
+      firebase: <SiFirebase />,
+      prisma: <IoPrism />,
+    };
+
+    return nameMap[name] || <HiMiniCircleStack />;
   };
 
   // Fetch projects from API
@@ -257,7 +279,7 @@ const ProjectsPage = () => {
                             className={styles.techIcon}
                             title={tech.name}
                           >
-                            {renderIcon(tech.icon)}
+                            {renderIcon(tech.icon || tech.name)}
                           </div>
                         ))}
                       </div>

@@ -139,8 +139,8 @@ const Projects = () => {
   const backgroundFileInputRef = useRef(null);
   const projectImagesFileInputRef = useRef(null);
 
-  // Function to render icon based on string value
-  const renderIcon = (iconName) => {
+  // Function to render icon based on string value or tech name
+  const renderIcon = (iconKeyOrName) => {
     const icons = {
       FaFigma: <FaFigma />,
       FaNodeJs: <FaNodeJs />, // Key now matches component name
@@ -158,7 +158,30 @@ const Projects = () => {
       SiFirebase: <SiFirebase />,
       IoPrism: <IoPrism />,
     };
-    return icons[iconName] || <HiMiniCircleStack />;
+
+    if (iconKeyOrName && icons[iconKeyOrName]) return icons[iconKeyOrName];
+
+    const name = String(iconKeyOrName || "").trim().toLowerCase();
+    const nameMap = {
+      react: <FaReact />,
+      node: <FaNodeJs />,
+      'node.js': <FaNodeJs />,
+      'nodejs': <FaNodeJs />,
+      tailwind: <RiTailwindCssFill />,
+      tailwindcss: <RiTailwindCssFill />,
+      github: <FaGithub />,
+      figma: <FaFigma />,
+      html: <FaHtml5 />,
+      css: <FaCss3Alt />,
+      python: <FaPython />,
+      mongodb: <DiMongodb />,
+      framer: <SiFramer />,
+      vue: <SiVuedotjs />,
+      firebase: <SiFirebase />,
+      prisma: <IoPrism />,
+    };
+
+    return nameMap[name] || <HiMiniCircleStack />;
   };
 
   // Cloudinary upload function
@@ -743,7 +766,7 @@ const Projects = () => {
                       key={index}
                       title={stack.name}
                     >
-                      {renderIcon(stack.value)}
+                      {renderIcon(stack.value || stack.name)}
                     </span>
                   ))}
                 </div>
@@ -910,10 +933,10 @@ const Projects = () => {
                     <div className={styles.techStackDetails}>
                       {viewingProject.techStack.map((stack, index) => (
                         <div key={index} className={styles.techItem}>
-                          <span className={styles.techIcon}>
-                            {renderIcon(stack.value)}
-                          </span>
-                          <span>{stack.name}</span>
+                              <span className={styles.techIcon}>
+                                {renderIcon(stack.value || stack.name)}
+                              </span>
+                              <span>{stack.name}</span>
                           <span className={styles.techCategory}>
                             ({stack.category})
                           </span>

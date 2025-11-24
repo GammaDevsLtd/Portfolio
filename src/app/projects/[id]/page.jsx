@@ -69,6 +69,37 @@ const iconMap = {
   PiFileJs: <FaReact />,
 };
 
+// Helper to resolve icon by key or tech name (falls back to placeholder)
+const getIcon = (iconKeyOrName) => {
+  if (!iconKeyOrName) return <HiMiniCircleStack />;
+
+  // direct key lookup (e.g., 'FaReact')
+  if (iconMap[iconKeyOrName]) return iconMap[iconKeyOrName];
+
+  // normalize and match common tech names
+  const name = String(iconKeyOrName).trim().toLowerCase();
+  const nameMap = {
+    react: <FaReact />,
+    node: <FaNodeJs />,
+    'node.js': <FaNodeJs />,
+    'nodejs': <FaNodeJs />,
+    tailwind: <RiTailwindCssFill />,
+    tailwindcss: <RiTailwindCssFill />,
+    github: <FaGithub />,
+    figma: <FaFigma />,
+    html: <FaHtml5 />,
+    css: <FaCss3Alt />,
+    python: <FaPython />,
+    mongodb: <DiMongodb />,
+    framer: <SiFramer />,
+    vue: <SiVuedotjs />,
+    firebase: <SiFirebase />,
+    prisma: <IoPrism />,
+  };
+
+  return nameMap[name] || <HiMiniCircleStack />;
+};
+
 const ProjectDetails = () => {
   const params = useParams();
   const router = useRouter();
@@ -335,7 +366,7 @@ const ProjectDetails = () => {
                             {technologies.map((tech, i) => (
                               <div key={i} className={styles.techItem}>
                                 <span className={styles.techIcon}>
-                                  {iconMap[tech.icon] || <HiMiniCircleStack />}
+                                  {getIcon(tech.icon || tech.name)}
                                 </span>
                                 <span>{tech.name}</span>
                               </div>

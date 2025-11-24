@@ -22,8 +22,8 @@ import { HiMiniCircleStack } from "react-icons/hi2";
 import Link from "next/link";
 
 
-// Function to render icon based on string value
-const renderIcon = (iconName) => {
+// Function to render icon based on string value or tech name
+const renderIcon = (iconKeyOrName) => {
   const icons = {
     FaFigma: <FaFigma />,
     FaNodeJs: <FaNodeJs />,
@@ -42,12 +42,32 @@ const renderIcon = (iconName) => {
     SiVuedotjs: <SiVuedotjs />,
     SiFirebase: <SiFirebase />,
     SiTailwindcss: <RiTailwindCssFill />,
-    SiTypescript: <FaReact />,
-    SiPostgresql: <FaReact />,
-    SiDjango: <FaPython />,
     IoPrism: <IoPrism />,
   };
-  return icons[iconName] || <HiMiniCircleStack />;
+
+  if (iconKeyOrName && icons[iconKeyOrName]) return icons[iconKeyOrName];
+
+  const name = String(iconKeyOrName || "").trim().toLowerCase();
+  const nameMap = {
+    react: <FaReact />,
+    node: <FaNodeJs />,
+    'node.js': <FaNodeJs />,
+    'nodejs': <FaNodeJs />,
+    tailwind: <RiTailwindCssFill />,
+    tailwindcss: <RiTailwindCssFill />,
+    github: <FaGithub />,
+    figma: <FaFigma />,
+    html: <FaHtml5 />,
+    css: <FaCss3Alt />,
+    python: <FaPython />,
+    mongodb: <DiMongodb />,
+    framer: <SiFramer />,
+    vue: <SiVuedotjs />,
+    firebase: <SiFirebase />,
+    prisma: <IoPrism />,
+  };
+
+  return nameMap[name] || <HiMiniCircleStack />;
 };
 
 // Function to get 6 random projects
@@ -171,7 +191,7 @@ const Projects = () => {
             <div className={styles.stacks}>
               {project.techStack?.slice(0, 3).map((stack, index) => (
                 <div key={index} className={styles.icon} title={stack.name}>
-                  {renderIcon(stack.icon)}
+                  {renderIcon(stack.icon || stack.name)}
                 </div>
               ))}
               {project.techStack?.length > 3 && (
