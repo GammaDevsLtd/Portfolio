@@ -150,6 +150,7 @@ const Projects = () => {
       FaPython: <FaPython />,
       FaGithub: <FaGithub />,
       RiNextjsFill: <RiNextjsFill />,
+      Nextjs: <RiNextjsFill />,
       RiTailwindCssFill: <RiTailwindCssFill />,
       RiSupabaseFill: <RiSupabaseFill />,
       DiMongodb: <DiMongodb />,
@@ -161,12 +162,14 @@ const Projects = () => {
 
     if (iconKeyOrName && icons[iconKeyOrName]) return icons[iconKeyOrName];
 
-    const name = String(iconKeyOrName || "").trim().toLowerCase();
+    const name = String(iconKeyOrName || "")
+      .trim()
+      .toLowerCase();
     const nameMap = {
       react: <FaReact />,
       node: <FaNodeJs />,
-      'node.js': <FaNodeJs />,
-      'nodejs': <FaNodeJs />,
+      "node.js": <FaNodeJs />,
+      nodejs: <FaNodeJs />,
       tailwind: <RiTailwindCssFill />,
       tailwindcss: <RiTailwindCssFill />,
       github: <FaGithub />,
@@ -179,6 +182,8 @@ const Projects = () => {
       vue: <SiVuedotjs />,
       firebase: <SiFirebase />,
       prisma: <IoPrism />,
+      RiNextjsFill: <RiNextjsFill />,
+      nextjs: <RiNextjsFill />,
     };
 
     return nameMap[name] || <HiMiniCircleStack />;
@@ -933,10 +938,10 @@ const Projects = () => {
                     <div className={styles.techStackDetails}>
                       {viewingProject.techStack.map((stack, index) => (
                         <div key={index} className={styles.techItem}>
-                              <span className={styles.techIcon}>
-                                {renderIcon(stack.value || stack.name)}
-                              </span>
-                              <span>{stack.name}</span>
+                          <span className={styles.techIcon}>
+                            {renderIcon(stack.value || stack.name)}
+                          </span>
+                          <span>{stack.name}</span>
                           <span className={styles.techCategory}>
                             ({stack.category})
                           </span>

@@ -41,10 +41,10 @@ const Footer = () => {
         </nav>
         <nav>
           <h6 className="font-bold uppercase opacity-60 mb-2">Company</h6>
-          <Link href="#home" className="block hover:underline mb-1">Home</Link>
-          <Link href="#about" className="block hover:underline mb-1">About us</Link>
-          <Link href="#team" className="block hover:underline mb-1">Meet the Team</Link>
-          <Link href="#projects" className="block hover:underline">Projects</Link>
+          <Link href="/#home" className="block hover:underline mb-1">Home</Link>
+          <Link href="/#about" className="block hover:underline mb-1">About us</Link>
+          <Link href="/#team" className="block hover:underline mb-1">Meet the Team</Link>
+          <Link href="/#projects" className="block hover:underline">Projects</Link>
         </nav>
         <nav>
           <h6 className="font-bold uppercase opacity-60 mb-2">Legal</h6>
