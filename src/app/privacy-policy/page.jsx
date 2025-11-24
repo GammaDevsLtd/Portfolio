@@ -86,7 +86,7 @@ const PrivacyPolicy = () => {
             If you have any questions or concerns about this Privacy Policy or how we handle your data, please contact us at:
           </p>
           <div className={styles.contactInfo}>
-            <p><strong>Email:</strong> info@gammadevs.name.ng</p>
+            <p><strong>Email:</strong> gammadevs0@gmail.com</p>
             <p><strong>Company:</strong> GammaDevs Technologies Limited</p>
             <p><strong>Website:</strong> www.gammadevs.name.ng</p>
           </div>
